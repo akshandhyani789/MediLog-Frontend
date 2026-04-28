@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import Toggle from './Toggle';
-import ThresholdSlider from './ThresholdSlider';
+import ThresholdSlider from './ThresHoldSlider';
 import LogoutButton from './LogoutButton';
 
 const NotificationCard = () => {
