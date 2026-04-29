@@ -1,67 +1,44 @@
 import { getAPIBaseURL } from "../utils/ipDetection.js";
 
-// ✅ normalize base URL (FIXES // PROBLEM)
 const cleanURL = (url) => url.replace(/\/+$/, "");
 
-// ========================================
-// 🌐 BASE URL
-// ========================================
 const getBaseURL = () => cleanURL(getAPIBaseURL());
 
-// ========================================
-// 🔥 SAFE FETCH WRAPPER
-// ========================================
 const safeFetch = async (url, options = {}) => {
+  const res = await fetch(url, options);
+
+  const text = await res.text();
+  let data;
+
   try {
-    const res = await fetch(url, options);
-
-    const contentType = res.headers.get("content-type");
-
-    let data;
-    if (contentType && contentType.includes("application/json")) {
-      data = await res.json();
-    } else {
-      const text = await res.text();
-      throw new Error(text || "Non-JSON response from server");
-    }
-
-    if (!res.ok) {
-      throw new Error(data?.error || data?.message || "Request failed");
-    }
-
-    return data;
-  } catch (err) {
-    console.error("❌ API Error:", err.message);
-    throw err;
+    data = JSON.parse(text);
+  } catch {
+    throw new Error(text || "Invalid server response");
   }
+
+  if (!res.ok) {
+    throw new Error(data?.error || "Request failed");
+  }
+
+  return data;
 };
 
-// ========================================
-// 🔍 GET MEDICINE
-// ========================================
-export const getMedicineByBarcode = async (barcode) => {
-  return safeFetch(`${getBaseURL()}/api/medicines/${barcode}`);
-};
+// ------------------ API ------------------
 
-// ========================================
-// 📸 OCR SCAN
-// ========================================
-export const scanMedicineOCR = async (file) => {
+export const getMedicineByBarcode = (barcode) =>
+  safeFetch(`${getBaseURL()}/api/medicines/${barcode}`);
+
+export const scanMedicineOCR = (file) => {
   const formData = new FormData();
   formData.append("image", file);
 
-  return safeFetch(`${getBaseURL()}/api/ocr/scan`, {
+  return safeFetch(`${getBaseURL()}/ocr/scan`, {
     method: "POST",
     body: formData,
   });
 };
 
-// ========================================
-// 🔐 LOGIN
-// ========================================
 export const sendUserToBackend = async (firebaseUser) => {
-  if (!firebaseUser) return null;
-
   const token = await firebaseUser.getIdToken(true);
 
   return safeFetch(`${getBaseURL()}/api/users/firebase-login`, {
@@ -79,9 +56,6 @@ export const sendUserToBackend = async (firebaseUser) => {
   });
 };
 
-// ========================================
-// ✏️ ONBOARDING
-// ========================================
 export const completeOnboarding = async (firebaseUser, data) => {
   const token = await firebaseUser.getIdToken();
 
@@ -95,10 +69,7 @@ export const completeOnboarding = async (firebaseUser, data) => {
   });
 };
 
-// ========================================
-// 💊 ADD MEDICINE
-// ========================================
-export const addUserMedicine = async (firebaseUser, medicineData) => {
+export const addUserMedicine = async (firebaseUser, data) => {
   const token = await firebaseUser.getIdToken();
 
   return safeFetch(`${getBaseURL()}/api/user-medicines`, {
@@ -107,31 +78,24 @@ export const addUserMedicine = async (firebaseUser, medicineData) => {
       "Content-Type": "application/json",
       Authorization: `Bearer ${token}`,
     },
-    body: JSON.stringify(medicineData),
+    body: JSON.stringify(data),
   });
 };
 
-// ========================================
-// 📦 GET MEDICINES
-// ========================================
 export const getUserMedicines = async (firebaseUser) => {
   const token = await firebaseUser.getIdToken();
 
   return safeFetch(`${getBaseURL()}/api/user-medicines`, {
-    method: "GET",
     headers: {
       Authorization: `Bearer ${token}`,
     },
   });
 };
 
-// ========================================
-// ❌ DELETE MEDICINE
-// ========================================
-export const deleteUserMedicine = async (firebaseUser, medicineId) => {
+export const deleteUserMedicine = async (firebaseUser, id) => {
   const token = await firebaseUser.getIdToken();
 
-  return safeFetch(`${getBaseURL()}/api/user-medicines/${medicineId}`, {
+  return safeFetch(`${getBaseURL()}/api/user-medicines/${id}`, {
     method: "DELETE",
     headers: {
       Authorization: `Bearer ${token}`,
