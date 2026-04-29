@@ -1,43 +1,68 @@
+import { getAPIBaseURL } from "../utils/ipDetection.js";
 
-// ✅ Dynamic API URL based on network access
-const BASE_URL = import.meta.env.VITE_API_URL;
+// ✅ Dynamic API URL based on environment
+const getBaseURL = () => getAPIBaseURL();
 
-// 🔍 GET MEDICINE
-
+// ========================================
+// 🔍 GET MEDICINE BY BARCODE
+// ========================================
 export const getMedicineByBarcode = async (barcode) => {
-  const res = await fetch(`${BASE_URL}/medicines/${barcode}`);
+  try {
+    const res = await fetch(`${getBaseURL()}/medicines/${barcode}`);
+    const data = await res.json();
 
-  const data = await res.json(); // ✅ read once
+    if (!res.ok) {
+      throw new Error(data.message || "Medicine not found");
+    }
 
-  if (!res.ok) {
-    throw new Error(data.message || "Not found");
+    console.log("✅ Medicine found:", data);
+    return data;
+
+  } catch (err) {
+    console.error("❌ Error fetching medicine:", err);
+    throw err;
   }
-
-  console.log("Medicine found:", data);
-
-  return data;
 };
 
+// ========================================
+// 📸 SCAN MEDICINE WITH OCR
+// ========================================
 export const scanMedicineOCR = async (file) => {
-  const formData = new FormData();
-  formData.append("image", file);
+  try {
+    const formData = new FormData();
+    formData.append("image", file);
 
-  const res = await fetch(`${BASE_URL}/ocr/scan`, {
-    method: "POST",
-    body: formData,
-  });
+    const res = await fetch(`${getBaseURL()}/ocr/scan`, {
+      method: "POST",
+      body: formData,
+    });
 
-  return res.json();
+    const data = await res.json();
+    
+    if (!res.ok) {
+      throw new Error(data.error || "OCR scan failed");
+    }
+
+    console.log("✅ OCR scan complete:", data);
+    return data;
+
+  } catch (err) {
+    console.error("❌ Error scanning medicine:", err);
+    throw err;
+  }
 };
 
-// 🔐 SEND USER (LOGIN) WITH RETRY LOGIC
+// ========================================
+// 🔐 FIREBASE LOGIN WITH RETRY
+// ========================================
 export const sendUserToBackend = async (firebaseUser, retries = 3) => {
   if (!firebaseUser) {
-    console.error("No Firebase user provided");
+    console.error("❌ No Firebase user provided");
     return null;
   }
 
-  console.log("Attempting to send user to backend:",firebaseUser);
+  console.log("🔐 Attempting Firebase login...");
+  
   for (let attempt = 1; attempt <= retries; attempt++) {
     try {
       // Force refresh to get a fresh token
@@ -46,7 +71,7 @@ export const sendUserToBackend = async (firebaseUser, retries = 3) => {
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
 
-      const res = await fetch(`${BASE_URL}/users/firebase-login`, {
+      const res = await fetch(`${getBaseURL()}/users/firebase-login`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -64,40 +89,152 @@ export const sendUserToBackend = async (firebaseUser, retries = 3) => {
       clearTimeout(timeoutId);
 
       const data = await res.json();
-      console.log("Backend login successful", data);
 
-      if (!res.ok) throw new Error(data.error || "Server error");
+      if (!res.ok) {
+        throw new Error(data.error || "Authentication failed");
+      }
 
+      console.log("✅ Backend login successful");
       return data;
-    } catch (err) {
-      console.error(`Backend connection attempt ${attempt}/${retries} failed:`, err.message);
 
-      // If it's the last attempt, return null
+    } catch (err) {
+      console.error(`❌ Login attempt ${attempt}/${retries} failed:`, err.message);
+
       if (attempt === retries) {
-        console.error("All retry attempts failed. Make sure the server is running on port 5000");
+        console.error("❌ All retry attempts failed. Backend URL:", getBaseURL());
         return null;
       }
 
-      // Wait before retrying (exponential backoff: 1s, 2s, 4s)
-      await new Promise(resolve => setTimeout(resolve, Math.pow(2, attempt - 1) * 1000));
+      // Exponential backoff: 1s, 2s, 4s
+      await new Promise(resolve => 
+        setTimeout(resolve, Math.pow(2, attempt - 1) * 1000)
+      );
     }
   }
 };
 
-// ✅ COMPLETE ONBOARDING (FIXED)
+// ========================================
+// ✏️ COMPLETE ONBOARDING
+// ========================================
 export const completeOnboarding = async (firebaseUser, data) => {
   try {
     const token = await firebaseUser.getIdToken();
 
-    console.log("Sending onboarding data:", data); // 🔍 debug
+    console.log("📋 Submitting onboarding data:", data);
 
-    const res = await fetch(`${BASE_URL}/users/complete-onboarding`, {
+    const res = await fetch(`${getBaseURL()}/users/complete-onboarding`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify(data),
+    });
+
+    const responseData = await res.json();
+
+    if (!res.ok) {
+      throw new Error(responseData.error || "Onboarding failed");
+    }
+
+    console.log("✅ Onboarding complete:", responseData);
+    return responseData;
+
+  } catch (err) {
+    console.error("❌ Onboarding error:", err);
+    throw err;
+  }
+};
+
+// ========================================
+// 💊 ADD USER MEDICINE
+// ========================================
+export const addUserMedicine = async (firebaseUser, medicineData) => {
+  try {
+    const token = await firebaseUser.getIdToken();
+
+    const res = await fetch(`${getBaseURL()}/user-medicines`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(medicineData),
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      throw new Error(data.error || "Failed to add medicine");
+    }
+
+    console.log("✅ Medicine added:", data);
+    return data;
+
+  } catch (err) {
+    console.error("❌ Error adding medicine:", err);
+    throw err;
+  }
+};
+
+// ========================================
+// 🔍 GET USER MEDICINES
+// ========================================
+export const getUserMedicines = async (firebaseUser) => {
+  try {
+    const token = await firebaseUser.getIdToken();
+
+    const res = await fetch(`${getBaseURL()}/user-medicines`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      throw new Error(data.error || "Failed to fetch medicines");
+    }
+
+    console.log("✅ User medicines retrieved:", data);
+    return data;
+
+  } catch (err) {
+    console.error("❌ Error fetching medicines:", err);
+    throw err;
+  }
+};
+
+// ========================================
+// ❌ DELETE USER MEDICINE
+// ========================================
+export const deleteUserMedicine = async (firebaseUser, medicineId) => {
+  try {
+    const token = await firebaseUser.getIdToken();
+
+    const res = await fetch(`${getBaseURL()}/user-medicines/${medicineId}`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    if (!res.ok) {
+      const data = await res.json();
+      throw new Error(data.error || "Failed to delete medicine");
+    }
+
+    console.log("✅ Medicine deleted");
+    return true;
+
+  } catch (err) {
+    console.error("❌ Error deleting medicine:", err);
+    throw err;
+  }
+};
     });
 
     const result = await res.json();
