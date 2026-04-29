@@ -1,6 +1,5 @@
 import React from "react";
-import { Sun, Sunrise, Moon } from "lucide-react";
-import InsightCard from "./InsightCard";
+import { Sun, Sunrise, Moon, Calendar, Clock } from "lucide-react";
 import { useAuth } from "../../../../../hooks/useAuth";
 
 function GreetingCard() {
@@ -21,58 +20,66 @@ function GreetingCard() {
     weekday: "long",
     day: "numeric",
     month: "long",
-    year: "numeric",
   });
 
   const { userData } = useAuth();
   const userName = userData?.name || "User";
 
-
-
-
   return (
-    <div className="w-full rounded-2xl p-5 
-      bg-gradient-to-br from-[#F4F6F5] to-white 
-      border border-gray-200 
-      shadow-sm space-y-4">
+    <div className="w-full rounded-3xl p-6 
+      bg-gradient-to-br from-teal-50 via-white to-blue-50
+      border border-teal-100/50
+      shadow-sm">
 
-      {/* Header */}
-      <div className="flex justify-between items-start">
-
-        <div>
-          <h2 className="text-base font-semibold text-gray-800 flex items-center gap-2">
-            
-            {/* Icon */}
-            <div className="p-1.5 rounded-lg bg-[#0F766E]/10">
-              <Icon className="w-4 h-4 text-[#0F766E]" />
+      {/* Main Content */}
+      <div className="flex items-start justify-between">
+        
+        <div className="flex-1">
+          {/* Icon + Greeting */}
+          <div className="flex items-center gap-3 mb-2">
+            <div className="p-2.5 rounded-2xl bg-white/80 border border-teal-200 shadow-sm">
+              <Icon className="w-5 h-5 text-teal-600" />
             </div>
+            
+            <div>
+              <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 tracking-tight">
+                Good {text},{" "}
+                <span className="text-teal-600">
+                  {userName.split(" ")[0]}
+                </span>
+              </h1>
+            </div>
+          </div>
 
-            Good {text},{" "}
-            <span className="text-[#0F766E] font-semibold">
-              {userName}
-            </span>
-          </h2>
-
-          <p className="text-xs text-gray-500 mt-1">
-            {formattedDate}
-          </p>
+          {/* Date Info */}
+          <div className="flex items-center gap-1 text-gray-600 text-sm font-medium mt-2 ml-12">
+            <Calendar className="w-4 h-4 text-teal-600" />
+            <span>{formattedDate}</span>
+          </div>
         </div>
 
-        {/* Badge */}
-        <div className="flex items-center gap-1 px-3 py-1.5 rounded-full 
-          bg-[#0F766E]/10 text-[#0F766E] 
-          text-xs font-medium backdrop-blur-sm">
-          
-          <Icon className="w-3 h-3" />
-          {text}
+        {/* Status Badge */}
+        <div className="flex flex-col items-end gap-2">
+          <div className="flex items-center gap-2 px-4 py-2 rounded-full 
+            bg-white border border-teal-100 shadow-sm">
+            <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
+            <span className="text-xs font-semibold text-gray-700">Active</span>
+          </div>
         </div>
       </div>
 
       {/* Divider */}
-      <div className="h-[1px] bg-gradient-to-r from-transparent via-gray-300 to-transparent" />
+      <div className="h-px bg-gradient-to-r from-transparent via-teal-200 to-transparent my-4" />
 
-      {/* Insight */}
-      {/* <InsightCard /> */}
+      {/* Quick Stats */}
+      <div className="flex flex-wrap gap-2">
+        <div className="px-3 py-1.5 rounded-full bg-white border border-gray-200 text-xs font-medium text-gray-700 shadow-sm">
+          ✅ All systems operational
+        </div>
+        <div className="px-3 py-1.5 rounded-full bg-white border border-gray-200 text-xs font-medium text-gray-700 shadow-sm">
+          📊 Dashboard ready
+        </div>
+      </div>
     </div>
   );
 }

@@ -29,30 +29,48 @@ function Problem() {
       bgColor: "bg-blue-50",
     },
   ];
+
   return (
     <div
       id="problem"
-      className=" py-20 px-10 lg:px-30 flex flex-col gap-5 text-center items-center"
+      className="
+        relative overflow-hidden
+        py-24 px-6 lg:px-32
+        flex flex-col gap-6 text-center items-center
+        bg-gradient-to-b from-white via-slate-50 to-white
+      "
     >
-      <h3 className="text-2xl font-semibold text-[#0F766E]">THE SILENT RISK</h3>
-      <h1 className="text-6xl font-bold ">
+      {/* subtle background glow */}
+      <div className="absolute top-[-120px] left-1/2 -translate-x-1/2 w-[400px] h-[400px] bg-teal-200 blur-[150px] opacity-30 rounded-full"></div>
+
+      <h3 className="text-sm md:text-base font-semibold tracking-widest text-[#0F766E] uppercase">
+        The Silent Risk
+      </h3>
+
+      <h1 className="text-3xl md:text-5xl lg:text-6xl font-bold leading-tight max-w-4xl">
         Your medicine cabinet could be a{" "}
         <span className="text-[#0F766E]">liability.</span>
       </h1>
-      <p className="text-xl text-gray-700 py-4 px-10">
-        Most Individuals keep expired medicines, creating unnecessary health
+
+      <p className="text-base md:text-xl text-gray-600 py-2 px-4 max-w-3xl">
+        Most individuals keep expired medicines, creating unnecessary health
         risks and financial waste. It's time to take control.
       </p>
-      <div className="flex gap-10 flex-col lg:flex-row items-center justify-center mt-10">
+
+      <div className="flex gap-8 flex-col lg:flex-row items-stretch justify-center mt-12 w-full max-w-6xl">
         {problems.map((problem, index) => (
-          <ProblemCard
+          <div
             key={index}
-            icon={problem.icon}
-            title={problem.title}
-            description={problem.description}
-            color={problem.color}
-            bgColor={problem.bgColor}
-          />
+            className="transform hover:-translate-y-2 transition duration-300"
+          >
+            <ProblemCard
+              icon={problem.icon}
+              title={problem.title}
+              description={problem.description}
+              color={problem.color}
+              bgColor={problem.bgColor}
+            />
+          </div>
         ))}
       </div>
     </div>

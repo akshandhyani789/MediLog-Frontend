@@ -1,11 +1,15 @@
 import React, { useEffect, useState } from "react";
 import StatusBadge from "./StatusBadge";
 import Pagination from "./Pagination";
+import EditMedicineModal from "./EditMedicineModal";
+import { getAuth } from "firebase/auth";
 
 const ITEMS_PER_PAGE = 5;
 
-export default function MedicineTable({ filteredMedicine }) {
+export default function MedicineTable({ filteredMedicine, fetchMedicines }) {
   const [page, setPage] = useState(1);
+  const [selectedMedicine, setSelectedMedicine] = useState(null);
+  const [isEditOpen, setIsEditOpen] = useState(false);
 
   const totalPages = Math.ceil(filteredMedicine.length / ITEMS_PER_PAGE);
 
@@ -14,15 +18,53 @@ export default function MedicineTable({ filteredMedicine }) {
     page * ITEMS_PER_PAGE
   );
 
-  // ✅ Reset page on filter change
   useEffect(() => {
     setPage(1);
   }, [filteredMedicine]);
 
-  // ✅ Safety fix (very important)
   useEffect(() => {
     if (page > totalPages) setPage(1);
   }, [totalPages]);
+
+
+  // 🔥 DELETE FUNCTION
+const handleDelete = async (id) => {
+  if (!window.confirm("Delete this medicine?")) return;
+
+  try {
+    const user = getAuth().currentUser;
+
+    if (!user) {
+      alert("User not logged in");
+      return;
+    }
+
+    const token = await user.getIdToken(); // 🔥 correct token
+
+    const res = await fetch(
+      `http://localhost:5000/api/user-medicines/${id}`,
+      {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    if (!res.ok) throw new Error("Delete failed");
+
+    fetchMedicines();
+  } catch (err) {
+    console.error("Delete error:", err);
+    alert("Failed to delete medicine");
+  }
+};
+
+  // 🔥 EDIT OPEN
+  const handleEdit = (item) => {
+    setSelectedMedicine(item);
+    setIsEditOpen(true);
+  };
 
   return (
     <div className="bg-white rounded-2xl shadow-sm border p-5">
@@ -66,7 +108,6 @@ export default function MedicineTable({ filteredMedicine }) {
                   key={item._id}
                   className="border-t hover:bg-gray-50 transition"
                 >
-                  {/* Name */}
                   <td className="px-4 py-3">
                     <div className="font-medium text-gray-800">
                       {item.name || "Unknown"}
@@ -76,26 +117,22 @@ export default function MedicineTable({ filteredMedicine }) {
                     </div>
                   </td>
 
-                  {/* Category */}
                   <td className="px-4">
                     <span className="px-2 py-1 text-xs bg-teal-50 text-teal-600 rounded-md">
                       {item.category || "N/A"}
                     </span>
                   </td>
 
-                  {/* Stock */}
                   <td className="text-center font-semibold">
                     {item.stock ?? 0}
                   </td>
 
-                  {/* Expiry */}
                   <td className="text-center text-gray-600">
                     {item.expiryDate
                       ? new Date(item.expiryDate).toLocaleDateString()
                       : "N/A"}
                   </td>
 
-                  {/* Days */}
                   <td
                     className={`text-center font-semibold ${
                       item.daysLeft <= 7
@@ -108,17 +145,22 @@ export default function MedicineTable({ filteredMedicine }) {
                     {item.daysLeft ?? 0}d
                   </td>
 
-                  {/* Status */}
                   <td className="text-center">
                     <StatusBadge status={item.status} />
                   </td>
 
-                  {/* Actions */}
                   <td className="text-right px-4 space-x-2">
-                    <button className="px-3 py-1 text-xs rounded-lg border hover:bg-gray-100">
+                    <button
+                      onClick={() => handleEdit(item)}
+                      className="px-3 py-1 text-xs rounded-lg border hover:bg-gray-100"
+                    >
                       Edit
                     </button>
-                    <button className="px-3 py-1 text-xs rounded-lg text-red-500 border hover:bg-red-50">
+
+                    <button
+                      onClick={() => handleDelete(item._id)}
+                      className="px-3 py-1 text-xs rounded-lg text-red-500 border hover:bg-red-50"
+                    >
                       Delete
                     </button>
                   </td>
@@ -127,7 +169,6 @@ export default function MedicineTable({ filteredMedicine }) {
             </tbody>
           </table>
 
-          {/* ✅ FIXED EMPTY STATE */}
           {currentData.length === 0 && (
             <div className="text-center py-10 text-gray-400">
               No medicines found
@@ -136,8 +177,19 @@ export default function MedicineTable({ filteredMedicine }) {
         </div>
       </div>
 
-      {/* Pagination */}
       <Pagination page={page} totalPages={totalPages} setPage={setPage} />
+
+      {/* 🔥 EDIT MODAL */}
+      {isEditOpen && (
+        <EditMedicineModal
+          medicine={selectedMedicine}
+          onClose={() => setIsEditOpen(false)}
+          onSuccess={() => {
+            fetchMedicines();
+            setIsEditOpen(false);
+          }}
+        />
+      )}
     </div>
   );
 }

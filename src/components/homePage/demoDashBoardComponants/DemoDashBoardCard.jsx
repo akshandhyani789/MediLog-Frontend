@@ -29,7 +29,7 @@ const medicines = [
 
 export default function DemoDashBoardCard() {
   return (
-    <div className="flex items-center justify-center bg-gray-100 p-6 lg:w-200 lg:px-10 lg:py-5">
+    <div className="flex items-center justify-center  p-6 lg:w-200 lg:px-10 lg:py-5">
       <div className="w-full max-w-2xl bg-white rounded-3xl shadow-xl p-6 animate-float">
         
         {/* Header */}

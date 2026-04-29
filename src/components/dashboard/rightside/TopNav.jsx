@@ -2,11 +2,11 @@ import React, { useState, useEffect } from "react";
 import { Bell, Moon, UserCircle, ChevronDown, Menu } from "lucide-react";
 import InfoBadge from "./componant/InfoBadge";
 import { useAuth } from "../../../context/AuthContext";
-import { getUserMedicines } from "../../../services/api"; // 🔥 fix path
+import { getUserMedicines } from "../../../services/api";
 
 function TopNav({ activePage, setIsSidebarOpen, setActivePage }) {
   const { user, userData } = useAuth();
-    const handleClick = (page) => {
+  const handleClick = (page) => {
     setActivePage(page);
   };
 
@@ -42,11 +42,6 @@ function TopNav({ activePage, setIsSidebarOpen, setActivePage }) {
     return diffDays <= 30 || med.stock <= 5;
   }).length;
 
-  const expiryCount = medicines.filter((med) => {
-    const expiry = new Date(med.expiryDate);
-    return expiry < now;
-  }).length;
-
   // 🕒 Time format
   const Hours = time.getHours().toString().padStart(2, "0");
   const Minutes = time.getMinutes().toString().padStart(2, "0");
@@ -57,64 +52,72 @@ function TopNav({ activePage, setIsSidebarOpen, setActivePage }) {
   const Month = time.toLocaleString("default", { month: "short" });
 
   return (
-    <nav className="sticky top-0 z-40 backdrop-blur-md bg-white/80 border-b h-16 flex items-center justify-between px-3 sm:px-6">
+    <nav className="sticky top-0 z-40 backdrop-blur-sm bg-white border-b border-gray-200 h-16 flex items-center justify-between px-4 sm:px-8 shadow-sm">
 
       {/* LEFT */}
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-4">
 
-        {/* Menu */}
+        {/* Menu Button */}
         <button
           onClick={() => setIsSidebarOpen(prev => !prev)}
-          className="md:hidden p-2 rounded-lg hover:bg-teal-100"
+          className="md:hidden p-2 rounded-lg hover:bg-gray-100 transition-colors duration-200"
         >
           <Menu className="w-5 h-5 text-gray-700" />
         </button>
 
-        {/* Page */}
-        <div className="px-3 py-1.5 rounded-lg bg-teal-100 text-teal-700 font-semibold">
+        {/* Page Badge */}
+        <div className="px-3.5 py-1.5 rounded-lg bg-gradient-to-br from-teal-50 to-blue-50 text-teal-700 font-semibold text-sm hidden sm:block border border-teal-100">
           {activePage}
         </div>
 
         {/* Time */}
-        <div className="hidden sm:flex gap-1 text-sm text-gray-700">
-          {Hours}:{Minutes}:<span className="text-gray-400">{Seconds}</span>
+        <div className="hidden sm:flex gap-1 text-xs text-gray-600 font-medium tracking-tight">
+          {Hours}:{Minutes}<span className="text-gray-400">:{Seconds}</span>
         </div>
 
         {/* Date */}
-        <div className="hidden lg:block text-sm text-gray-500">
+        <div className="hidden lg:block text-xs text-gray-500 font-medium">
           {Day}, {date} {Month}
         </div>
       </div>
 
       {/* RIGHT */}
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-2 sm:gap-3">
 
-        {/* Alerts */}
-        <InfoBadge
-          Icon={Bell}
-          iconText="Alerts"
-          countType="alerts"
-          color="text-teal-700"
-          bgColor="bg-teal-50"
-          alertCount={alertCount}
-          handleClick={() => handleClick("Alerts")}
-        />
+        {/* Alert Badge with Icon */}
+        <button
+          onClick={() => handleClick("Alerts")}
+          className="relative flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 hover:bg-gray-50 group"
+        >
+          <div className="relative">
+            <Bell className="w-5 h-5 text-gray-700" />
+            {alertCount > 0 && (
+              <span className="absolute -top-1 -right-1 flex items-center justify-center w-5 h-5 text-xs font-bold text-white bg-red-500 rounded-full animate-pulse">
+                {alertCount > 9 ? '9+' : alertCount}
+              </span>
+            )}
+          </div>
+          <span className="hidden sm:inline text-gray-700">{alertCount > 0 ? `${alertCount} Alert${alertCount !== 1 ? 's' : ''}` : 'Alerts'}</span>
+        </button>
 
-        {/* Dark mode */}
-        <div className="p-2 rounded-lg bg-teal-50 hover:bg-teal-100 cursor-pointer">
-          <Moon className="w-4 h-4 text-teal-700" />
-        </div>
+        {/* Theme Toggle */}
+        <button className="p-2 rounded-lg hover:bg-gray-100 transition-colors duration-200">
+          <Moon className="w-5 h-5 text-gray-600" />
+        </button>
 
-        {/* User */}
-        <div
-        onClick={() => handleClick("Profile")} 
-         className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-gray-100 hover:bg-gray-200 cursor-pointer">
-          <UserCircle className="w-5 h-5 text-teal-700" />
-          <span className="hidden sm:block text-sm font-medium text-gray-700">
+        {/* User Menu */}
+        <button
+          onClick={() => handleClick("Profile")}
+          className="flex items-center gap-2.5 px-3 py-1.5 rounded-full bg-gray-50 hover:bg-gray-100 transition-all duration-200 border border-gray-200"
+        >
+          <div className="w-6 h-6 rounded-full bg-gradient-to-br from-teal-500 to-teal-600 flex items-center justify-center">
+            <UserCircle className="w-5 h-5 text-white" />
+          </div>
+          <span className="hidden sm:block text-sm font-medium text-gray-700 max-w-[100px] truncate">
             {UserName}
           </span>
-          <ChevronDown className="w-4 h-4 text-gray-500" />
-        </div>
+          <ChevronDown className="w-4 h-4 text-gray-500 hidden sm:block" />
+        </button>
 
       </div>
     </nav>

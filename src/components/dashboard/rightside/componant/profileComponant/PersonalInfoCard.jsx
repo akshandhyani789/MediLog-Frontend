@@ -23,21 +23,29 @@ const PersonalInfoCard = ({user, setUser}) => {
 
   return (
     <section className="w-full">
-      <div className="bg-white rounded-[1.2rem] shadow-sm border border-gray-50 p-8 md:p-12">
+      <div className="bg-white rounded-3xl border border-gray-200 shadow-sm p-6 sm:p-8 md:p-10 hover:border-gray-300 transition-all duration-300">
 
         {/* Header */}
-        <div className="flex justify-between items-center mb-10">
-          <h2 className="text-3xl font-semibold text-slate-900">
-            Personal Information
-          </h2>
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
+          <div>
+            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 tracking-tight">
+              Personal Information
+            </h2>
+            <p className="text-sm text-gray-500 font-medium mt-1">
+              Manage your account details
+            </p>
+          </div>
 
           <EditButton onClick={handleEdit}>
-            {isEditing ? "Save" : "Edit"}
+            {isEditing ? "Save Changes" : "Edit"}
           </EditButton>
         </div>
 
+        {/* Divider */}
+        <div className="h-px bg-gradient-to-r from-transparent via-gray-200 to-transparent mb-8" />
+
         {/* Fields */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-10">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
           <DataField
             label="Full Name"
             value={user.fullName}

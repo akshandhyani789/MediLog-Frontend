@@ -57,7 +57,7 @@ function SectionsDataRight({ activePage, setActivePage }) {
   }, []);
 
   return (
-    <div className="flex-1 bg-[#f7f6f2] min-h-[calc(100vh-64px)] overflow-y-auto">
+    <div className="flex-1 bg-gradient-to-br from-gray-50 to-white min-h-[calc(100vh-64px)] overflow-y-auto">
       <div className="p-4">
         {pages[activePage] || <Dashboard setActivePage={setActivePage} />}
       </div>
