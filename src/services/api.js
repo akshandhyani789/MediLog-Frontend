@@ -1,12 +1,11 @@
-import { getAPIBaseURL } from "../utils/ipDetection.js";
 
 // ✅ Dynamic API URL based on network access
-const getBaseURL = () => getAPIBaseURL();
+const BASE_URL = import.meta.env.VITE_API_URL;
 
 // 🔍 GET MEDICINE
 
 export const getMedicineByBarcode = async (barcode) => {
-  const res = await fetch(`${getBaseURL()}/medicines/${barcode}`);
+  const res = await fetch(`${BASE_URL}/medicines/${barcode}`);
 
   const data = await res.json(); // ✅ read once
 
@@ -23,7 +22,7 @@ export const scanMedicineOCR = async (file) => {
   const formData = new FormData();
   formData.append("image", file);
 
-  const res = await fetch(`${getBaseURL()}/ocr/scan`, {
+  const res = await fetch(`${BASE_URL}/ocr/scan`, {
     method: "POST",
     body: formData,
   });
@@ -47,7 +46,7 @@ export const sendUserToBackend = async (firebaseUser, retries = 3) => {
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
 
-      const res = await fetch(`${getBaseURL()}/users/firebase-login`, {
+      const res = await fetch(`${BASE_URL}/users/firebase-login`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -92,7 +91,7 @@ export const completeOnboarding = async (firebaseUser, data) => {
 
     console.log("Sending onboarding data:", data); // 🔍 debug
 
-    const res = await fetch(`${getBaseURL()}/users/complete-onboarding`, {
+    const res = await fetch(`${BASE_URL}/users/complete-onboarding`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
@@ -126,7 +125,7 @@ export const getUserMedicines = async (firebaseUser) => {
 
     const token = await firebaseUser.getIdToken();
 
-    const res = await fetch(`${getBaseURL()}/user-medicines`, {
+    const res = await fetch(`${BASE_URL}/user-medicines`, {
       method: "GET",
       headers: {
         Authorization: `Bearer ${token}`,
@@ -155,7 +154,7 @@ export const addUserMedicine = async (firebaseUser, medicineData) => {
 
     const token = await firebaseUser.getIdToken();
 
-    const res = await fetch(`${getBaseURL()}/user-medicines`, {
+    const res = await fetch(`${BASE_URL}/user-medicines`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
