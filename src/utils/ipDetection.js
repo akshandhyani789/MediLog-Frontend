@@ -4,16 +4,14 @@
  */
 
 export function getAPIBaseURL() {
-  const host = window.location.hostname;
+  const isLocal = window.location.hostname === "localhost";
 
-  // Local development
-  if (host === "localhost" || host === "127.0.0.1") {
-    return "http://localhost:5000/api";
+  if (isLocal) {
+    return "http://localhost:5000";
   }
 
-  // Production
-  return import.meta.env.VITE_API_URL || 
-    "https://medilog-backend-dc01.onrender.com/api";
+  // production backend (Render)
+  return "https://medilog-backend-dc01.onrender.com";
 }
 export function isNetworkAccess() {
   const host = window.location.hostname;
