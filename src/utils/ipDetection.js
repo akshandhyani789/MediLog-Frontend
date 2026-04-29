@@ -22,7 +22,7 @@ export function getAPIBaseURL() {
   // Using environment variable set during build or fallback to Render URL
   const prodBackendURL =
     import.meta.env.VITE_API_URL ||
-    "https://medilog-backend-1482.onrender.com/api";
+    "https://medilog-backend-dc01.onrender.com//api";
 
   return prodBackendURL;
 }
