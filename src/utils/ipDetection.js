@@ -5,28 +5,16 @@
 
 export function getAPIBaseURL() {
   const host = window.location.hostname;
-  const protocol = window.location.protocol;
 
-  // ✅ Local development
+  // Local development
   if (host === "localhost" || host === "127.0.0.1") {
     return "http://localhost:5000/api";
   }
 
-  // ✅ Network/Mobile access (same IP/domain, different port)
-  if (host.includes(".")) {
-    // Local IP address detected
-    return `${protocol}//${host}:5000/api`;
-  }
-
-  // ✅ Production deployment (Vercel frontend → Render backend)
-  // Using environment variable set during build or fallback to Render URL
-  const prodBackendURL =
-    import.meta.env.VITE_API_URL ||
-    "https://medilog-backend-dc01.onrender.com//api";
-
-  return prodBackendURL;
+  // Production
+  return import.meta.env.VITE_API_URL || 
+    "https://medilog-backend-dc01.onrender.com/api";
 }
-
 export function isNetworkAccess() {
   const host = window.location.hostname;
   return host !== "localhost" && host !== "127.0.0.1";
