@@ -3,8 +3,6 @@ import TopNav from "../components/dashboard/rightside/TopNav";
 import LeftSide from "../components/dashboard/leftside/LeftSide";
 import SectionsDataRight from "../components/dashboard/rightside/SectionsDataRight";
 import { useAuth } from "../context/AuthContext";
-import { getMedicineByBarcode } from "../services/api";
-
 
 function Dashboard() {
   const [activePage, setActivePage] = useState("Dashboard");
@@ -13,18 +11,30 @@ function Dashboard() {
   const { userData } = useAuth();
   const [userRole, setUserRole] = useState(null);
 
-  useEffect(() => { 
+  // ✅ Set role
+  useEffect(() => {
     if (userData?.role) {
       setUserRole(userData.role);
       console.log("User role set to:", userData.role);
     }
   }, [userData]);
 
+  // ✅ FIX: Auto close sidebar when resizing to desktop
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth >= 1024) {
+        setIsSidebarOpen(false); // reset mobile state
+      }
+    };
+
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   return (
-    <div className="flex">
+    <div className="flex min-h-screen bg-gray-50">
 
-      {/* Sidebar */}
+      {/* 🔥 Sidebar */}
       <LeftSide
         setActivePage={setActivePage}
         activeNav={activePage}
@@ -32,29 +42,36 @@ function Dashboard() {
         setIsSidebarOpen={setIsSidebarOpen}
       />
 
-      {/* Overlay (mobile) */}
+      {/* 🔥 Overlay (Mobile only) */}
       {isSidebarOpen && (
         <div
-          className="fixed inset-0 bg-black/30 z-40 md:hidden"
+          className="fixed inset-0 bg-black/30 z-40 lg:hidden"
           onClick={() => setIsSidebarOpen(false)}
         />
       )}
 
-      {/* Right Section */}
+      {/* 🔥 Main Content */}
       <div
-  className={`
-    flex-1 transition-all duration-300
-    ${isSidebarOpen ? "ml-56 xl:ml-64" : "ml-0"}
-  `}
->
-        
+        className={`
+          flex-1 flex flex-col transition-all duration-300
+          ml-0
+          lg:ml-56 xl:ml-64
+        `}
+      >
+        {/* 🔥 Top Nav */}
         <TopNav
           activePage={activePage}
           setIsSidebarOpen={setIsSidebarOpen}
           setActivePage={setActivePage}
         />
 
-        <SectionsDataRight activePage={activePage} setActivePage={setActivePage}/>
+        {/* 🔥 Page Content */}
+        <div className="p-4 sm:p-6 md:p-8">
+          <SectionsDataRight
+            activePage={activePage}
+            setActivePage={setActivePage}
+          />
+        </div>
       </div>
     </div>
   );
