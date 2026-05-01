@@ -60,7 +60,7 @@ function TopNav({ activePage, setIsSidebarOpen, setActivePage }) {
         {/* Menu Button */}
         <button
           onClick={() => setIsSidebarOpen(prev => !prev)}
-          className="md:hidden p-2 rounded-lg hover:bg-gray-100 transition-colors duration-200"
+          className="lg:hidden p-2 rounded-lg hover:bg-gray-100 transition-colors duration-200"
         >
           <Menu className="w-5 h-5 text-gray-700" />
         </button>

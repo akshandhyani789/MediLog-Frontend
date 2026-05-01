@@ -41,7 +41,12 @@ function Dashboard() {
       )}
 
       {/* Right Section */}
-      <div className="flex-1 md:ml-56 xl:ml-64 transition-all">
+      <div
+  className={`
+    flex-1 transition-all duration-300
+    ${isSidebarOpen ? "ml-56 xl:ml-64" : "ml-0"}
+  `}
+>
         
         <TopNav
           activePage={activePage}

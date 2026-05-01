@@ -39,22 +39,33 @@ export const scanMedicineOCR = (file) => {
 };
 
 export const sendUserToBackend = async (firebaseUser) => {
-  const token = await firebaseUser.getIdToken(true);
+  try {
+    if (!firebaseUser) {
+      throw new Error("No Firebase user found");
+    }
 
-  return safeFetch(`${getBaseURL()}/api/users/firebase-login`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`,
-    },
-    body: JSON.stringify({
-      uid: firebaseUser.uid,
-      email: firebaseUser.email,
-      name: firebaseUser.displayName,
-      phone: firebaseUser.phoneNumber,
-    }),
-  });
+    // 🔑 Get fresh Firebase ID token
+    const token = await firebaseUser.getIdToken(true);
+
+    const response = await safeFetch(
+      `${getBaseURL()}/api/users/firebase-login`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`, // ✅ required
+        },
+      }
+    );
+
+    return response;
+
+  } catch (error) {
+    console.error("❌ Error sending user to backend:", error);
+    throw error;
+  }
 };
+
 
 export const completeOnboarding = async (firebaseUser, data) => {
   const token = await firebaseUser.getIdToken();
@@ -100,5 +111,32 @@ export const deleteUserMedicine = async (firebaseUser, id) => {
     headers: {
       Authorization: `Bearer ${token}`,
     },
+  });
+};
+
+
+
+// 📥 Get notification settings
+export const getNotificationSettings = async (firebaseUser) => {
+  const token = await firebaseUser.getIdToken();
+
+  return safeFetch(`${getBaseURL()}/api/users/notification-settings`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+};
+
+// 💾 Update notification settings
+export const updateNotificationSettings = async (firebaseUser, data) => {
+  const token = await firebaseUser.getIdToken();
+
+  return safeFetch(`${getBaseURL()}/api/users/notification-settings`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify(data),
   });
 };

@@ -5,7 +5,8 @@ import { useAuth } from "../../../../../hooks/useAuth";
 
 const PersonalInfoCard = ({user, setUser}) => {
   const [isEditing, setIsEditing] = React.useState(false);
-  
+  const { userData } = useAuth();
+  console.log("PersonalInfoCard user data:", userData);
 
   const handleEdit = () => {
     if (isEditing) {
