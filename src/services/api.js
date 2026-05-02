@@ -1,5 +1,5 @@
 import { getAPIBaseURL } from "../utils/ipDetection.js";
-
+import { auth } from "../firebase/firebase.js";
 // ------------------ BASE URL ------------------
 
 const cleanURL = (url) => url.replace(/\/+$/, "");
@@ -138,6 +138,25 @@ export const updateNotificationSettings = async (firebaseUser, data) => {
   const token = await firebaseUser.getIdToken();
 
   return safeFetch(`${BASE_URL}/api/users/notification-settings`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify(data),
+  });
+};
+
+export const updateUserProfile = async (data) => {
+  const firebaseUser = auth.currentUser;
+
+  if (!firebaseUser) {
+    throw new Error("User not logged in");
+  }
+
+  const token = await firebaseUser.getIdToken();
+
+  return safeFetch(`${BASE_URL}/api/users/update-profile`, {
     method: "PUT",
     headers: {
       "Content-Type": "application/json",

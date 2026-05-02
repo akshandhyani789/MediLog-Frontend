@@ -1,6 +1,6 @@
-import React from "react";
+import React, {use, useEffect} from "react";
 import { Sun, Sunrise, Moon, Calendar, Clock } from "lucide-react";
-import { useAuth } from "../../../../../hooks/useAuth";
+import { useAuth } from "../../../../../context/AuthContext";
 
 function GreetingCard() {
   
@@ -22,8 +22,9 @@ function GreetingCard() {
     month: "long",
   });
 
-  const { userData } = useAuth();
-  const userName = userData?.name || "User";
+
+const { userData } = useAuth();
+const userName = userData?.name || "User";
 
   return (
     <div className="w-full rounded-3xl p-6 
@@ -73,9 +74,7 @@ function GreetingCard() {
 
       {/* Quick Stats */}
       <div className="flex flex-wrap gap-2">
-        <div className="px-3 py-1.5 rounded-full bg-white border border-gray-200 text-xs font-medium text-gray-700 shadow-sm">
-          ✅ All systems operational
-        </div>
+        
         <div className="px-3 py-1.5 rounded-full bg-white border border-gray-200 text-xs font-medium text-gray-700 shadow-sm">
           📊 Dashboard ready
         </div>
