@@ -1,76 +1,84 @@
 import { getAPIBaseURL } from "../utils/ipDetection.js";
 
+// ------------------ BASE URL ------------------
+
 const cleanURL = (url) => url.replace(/\/+$/, "");
 
-const getBaseURL = () => cleanURL(getAPIBaseURL());
+// ✅ define once (IMPORTANT FIX)
+const BASE_URL = cleanURL(getAPIBaseURL());
+console.log("🌐 API Base URL:", BASE_URL);
+
+// ------------------ SAFE FETCH ------------------
 
 const safeFetch = async (url, options = {}) => {
-  const res = await fetch(url, options);
-
-  const text = await res.text();
-  let data;
-
   try {
-    data = JSON.parse(text);
-  } catch {
-    throw new Error(text || "Invalid server response");
-  }
+    const res = await fetch(url, options);
 
-  if (!res.ok) {
-    throw new Error(data?.error || "Request failed");
-  }
+    const text = await res.text();
 
-  return data;
+    let data;
+    try {
+      data = JSON.parse(text);
+    } catch {
+      throw new Error(text || "Invalid server response");
+    }
+
+    if (!res.ok) {
+      throw new Error(data?.error || "Request failed");
+    }
+
+    return data;
+
+  } catch (err) {
+    console.error("❌ Fetch failed:", url, err.message);
+
+    if (err.message.includes("Failed to fetch")) {
+      throw new Error("Backend not reachable. Is server running?");
+    }
+
+    throw err;
+  }
 };
 
 // ------------------ API ------------------
 
 export const getMedicineByBarcode = (barcode) =>
-  safeFetch(`${getBaseURL()}/api/medicines/${barcode}`);
+  safeFetch(`${BASE_URL}/api/medicines/${barcode}`);
 
 export const scanMedicineOCR = (file) => {
   const formData = new FormData();
   formData.append("image", file);
 
-  return safeFetch(`${getBaseURL()}/ocr/scan`, {
+  return safeFetch(`${BASE_URL}/ocr/scan`, {
     method: "POST",
     body: formData,
   });
 };
 
 export const sendUserToBackend = async (firebaseUser) => {
-  try {
-    if (!firebaseUser) {
-      throw new Error("No Firebase user found");
-    }
+  if (!firebaseUser) return null;
 
-    // 🔑 Get fresh Firebase ID token
+  try {
     const token = await firebaseUser.getIdToken(true);
 
-    const response = await safeFetch(
-      `${getBaseURL()}/api/users/firebase-login`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`, // ✅ required
-        },
-      }
-    );
-
-    return response;
+    return await safeFetch(`${BASE_URL}/api/users/firebase-login`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    });
 
   } catch (error) {
-    console.error("❌ Error sending user to backend:", error);
-    throw error;
+    console.error("❌ Backend login failed:", error.message);
+    return null; // ✅ prevents app crash
   }
 };
-
 
 export const completeOnboarding = async (firebaseUser, data) => {
   const token = await firebaseUser.getIdToken();
 
-  return safeFetch(`${getBaseURL()}/api/users/complete-onboarding`, {
+  return safeFetch(`${BASE_URL}/api/users/complete-onboarding`, {
     method: "PUT",
     headers: {
       "Content-Type": "application/json",
@@ -83,7 +91,7 @@ export const completeOnboarding = async (firebaseUser, data) => {
 export const addUserMedicine = async (firebaseUser, data) => {
   const token = await firebaseUser.getIdToken();
 
-  return safeFetch(`${getBaseURL()}/api/user-medicines`, {
+  return safeFetch(`${BASE_URL}/api/user-medicines`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -96,7 +104,7 @@ export const addUserMedicine = async (firebaseUser, data) => {
 export const getUserMedicines = async (firebaseUser) => {
   const token = await firebaseUser.getIdToken();
 
-  return safeFetch(`${getBaseURL()}/api/user-medicines`, {
+  return safeFetch(`${BASE_URL}/api/user-medicines`, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
@@ -106,7 +114,7 @@ export const getUserMedicines = async (firebaseUser) => {
 export const deleteUserMedicine = async (firebaseUser, id) => {
   const token = await firebaseUser.getIdToken();
 
-  return safeFetch(`${getBaseURL()}/api/user-medicines/${id}`, {
+  return safeFetch(`${BASE_URL}/api/user-medicines/${id}`, {
     method: "DELETE",
     headers: {
       Authorization: `Bearer ${token}`,
@@ -114,13 +122,11 @@ export const deleteUserMedicine = async (firebaseUser, id) => {
   });
 };
 
-
-
 // 📥 Get notification settings
 export const getNotificationSettings = async (firebaseUser) => {
   const token = await firebaseUser.getIdToken();
 
-  return safeFetch(`${getBaseURL()}/api/users/notification-settings`, {
+  return safeFetch(`${BASE_URL}/api/users/notification-settings`, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
@@ -131,7 +137,7 @@ export const getNotificationSettings = async (firebaseUser) => {
 export const updateNotificationSettings = async (firebaseUser, data) => {
   const token = await firebaseUser.getIdToken();
 
-  return safeFetch(`${getBaseURL()}/api/users/notification-settings`, {
+  return safeFetch(`${BASE_URL}/api/users/notification-settings`, {
     method: "PUT",
     headers: {
       "Content-Type": "application/json",

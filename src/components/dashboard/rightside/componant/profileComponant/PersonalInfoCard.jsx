@@ -1,11 +1,12 @@
-import React from "react";
+import React, { useState } from "react";
 import DataField from "./DataField";
 import EditButton from "./EditButton";
 import { useAuth } from "../../../../../hooks/useAuth";
 
-const PersonalInfoCard = ({user, setUser}) => {
-  const [isEditing, setIsEditing] = React.useState(false);
+const PersonalInfoCard = ({ user, setUser }) => {
+  const [isEditing, setIsEditing] = useState(false);
   const { userData } = useAuth();
+
   console.log("PersonalInfoCard user data:", userData);
 
   const handleEdit = () => {
@@ -18,7 +19,7 @@ const PersonalInfoCard = ({user, setUser}) => {
   const handleChange = (field, value) => {
     setUser((prev) => ({
       ...prev,
-      [field]: value
+      [field]: value,
     }));
   };
 
@@ -47,26 +48,31 @@ const PersonalInfoCard = ({user, setUser}) => {
 
         {/* Fields */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
+          
           <DataField
             label="Full Name"
             value={user.fullName}
             isEditing={isEditing}
             onChange={(val) => handleChange("fullName", val)}
           />
+
+          {/* ✅ Disabled email field */}
           <DataField
             label="Email Address"
             value={user.email}
             isEditing={isEditing}
             onChange={(val) => handleChange("email", val)}
+            isDisable={true}
           />
+
           <DataField
             label="Phone Number"
             value={user.phone}
             isEditing={isEditing}
             onChange={(val) => handleChange("phone", val)}
           />
-        </div>
 
+        </div>
       </div>
     </section>
   );

@@ -3,6 +3,9 @@ import StatusBadge from "./StatusBadge";
 import Pagination from "./Pagination";
 import EditMedicineModal from "./EditMedicineModal";
 import { getAuth } from "firebase/auth";
+import { getAPIBaseURL } from "../../../../../utils/ipDetection";
+
+const API_BASE_URL = getAPIBaseURL(); // ✅ FIXED: define once
 
 const ITEMS_PER_PAGE = 5;
 
@@ -52,7 +55,7 @@ export default function MedicineTable({ filteredMedicine, fetchMedicines }) {
       const token = await user.getIdToken();
 
       const res = await fetch(
-        `http://localhost:5000/api/user-medicines/${id}`,
+        `${API_BASE_URL}/api/user-medicines/${id}`,
         {
           method: "DELETE",
           headers: {

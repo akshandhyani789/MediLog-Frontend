@@ -1,22 +1,33 @@
 import React, { useState } from "react";
 import { getAuth } from "firebase/auth";
+import { getAPIBaseURL } from "../../../../../utils/ipDetection";
+
+const API_BASE_URL = getAPIBaseURL();
 
 export default function EditMedicineModal({ medicine, onClose, onSuccess }) {
   const [form, setForm] = useState({
-    name: medicine.name || "",
-    brand: medicine.brand || "",
-    category: medicine.category || "",
-    stock: medicine.stock || 0,
-    expiryDate: medicine.expiryDate?.split("T")[0] || "",
+    name: medicine?.name || "",
+    brand: medicine?.brand || "",
+    category: medicine?.category || "",
+    stock: medicine?.stock?.toString() || "0",
+    expiryDate: medicine?.expiryDate
+      ? medicine.expiryDate.split("T")[0]
+      : "",
   });
 
   const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+
+    setForm((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
   };
 
   const handleUpdate = async () => {
     try {
       const user = getAuth().currentUser;
+
       if (!user) {
         alert("User not logged in");
         return;
@@ -24,7 +35,6 @@ export default function EditMedicineModal({ medicine, onClose, onSuccess }) {
 
       const token = await user.getIdToken();
 
-      // ✅ FIXED BODY STRUCTURE
       const updatedData = {
         customMedicine: {
           name: form.name,
@@ -36,7 +46,7 @@ export default function EditMedicineModal({ medicine, onClose, onSuccess }) {
       };
 
       const res = await fetch(
-        `http://localhost:5000/api/user-medicines/${medicine._id}`,
+        `${API_BASE_URL}/api/user-medicines/${medicine._id}`,
         {
           method: "PUT",
           headers: {
@@ -50,6 +60,7 @@ export default function EditMedicineModal({ medicine, onClose, onSuccess }) {
       if (!res.ok) throw new Error("Update failed");
 
       onSuccess();
+      onClose();
     } catch (err) {
       console.error("Update error:", err);
       alert("Failed to update medicine");
@@ -60,9 +71,7 @@ export default function EditMedicineModal({ medicine, onClose, onSuccess }) {
     <div className="fixed inset-0 bg-black/30 flex justify-center items-center z-50">
       <div className="bg-white rounded-2xl p-6 w-[400px] shadow-xl">
 
-        <h2 className="text-lg font-semibold mb-4">
-          Edit Medicine
-        </h2>
+        <h2 className="text-lg font-semibold mb-4">Edit Medicine</h2>
 
         <div className="space-y-3">
 
@@ -105,6 +114,7 @@ export default function EditMedicineModal({ medicine, onClose, onSuccess }) {
             onChange={handleChange}
             className="w-full border p-2 rounded-lg"
           />
+
         </div>
 
         <div className="flex justify-end gap-3 mt-5">

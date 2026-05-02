@@ -7,7 +7,7 @@ export function getAPIBaseURL() {
   const isLocal = window.location.hostname === "localhost";
 
   if (isLocal) {
-    return "http://localhost:5000";
+    return "http://localhost:5001";
   }
 
   // production backend (Render)

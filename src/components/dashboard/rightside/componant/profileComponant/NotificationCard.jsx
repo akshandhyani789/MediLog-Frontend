@@ -9,6 +9,11 @@ import {
 } from "../../../../../services/api";
 import { getAuth } from "firebase/auth";
 import axios from 'axios';
+import { getAPIBaseURL } from "../../../../../utils/ipDetection";
+import { use } from 'react';
+
+
+const API_BASE_URL = getAPIBaseURL(); // ✅ FIXED: define once
 
 const auth = getAuth();
 
@@ -44,12 +49,13 @@ const NotificationCard = () => {
 }, []);
 
   // 💾 Save settings to backend
+
   const saveSettings = async (email, thresh) => {
     try {
       const token = await getToken();
 
       await axios.put(
-        "http://localhost:5000/api/users/notification-settings",
+        `${API_BASE_URL}/api/users/notification-settings`,
         {
           emailNotifications: email,
           notificationThreshold: thresh,
@@ -66,6 +72,7 @@ const NotificationCard = () => {
     }
   };
 
+  
   // 🔁 Email toggle handler
   const handleEmailToggle = () => {
     const updated = !emailAlerts;
