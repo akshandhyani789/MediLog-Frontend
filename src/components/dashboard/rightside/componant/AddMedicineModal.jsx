@@ -15,7 +15,10 @@ function AddMedicineModal({ isOpen, onClose, scannedMedicine, openScanner, onMed
     expiryDate: "",
     stock: "",
     category: "Tablet",
+    maxStock: "",
   });
+
+
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -29,6 +32,7 @@ function AddMedicineModal({ isOpen, onClose, scannedMedicine, openScanner, onMed
         name: scannedMedicine.name || "",
         brand: scannedMedicine.brand || "",
         dosage: scannedMedicine.dosage || "",
+        category: scannedMedicine.category || "Tablet",
       }));
     }
   }, [scannedMedicine]);
@@ -44,6 +48,7 @@ function AddMedicineModal({ isOpen, onClose, scannedMedicine, openScanner, onMed
         expiryDate: "",
         stock: "",
         category: "Tablet",
+        maxStock: "",
       });
       setError(null);
       setSuccess(false);
@@ -88,6 +93,7 @@ function AddMedicineModal({ isOpen, onClose, scannedMedicine, openScanner, onMed
         expiryDate: form.expiryDate,
         stock: parseInt(form.stock),
         category: form.category,
+        maxStock: form.maxStock ? parseInt(form.maxStock) : 0,
       };
 
       const result = await addUserMedicine(user, medicineData);
@@ -105,6 +111,7 @@ function AddMedicineModal({ isOpen, onClose, scannedMedicine, openScanner, onMed
         expiryDate: "",
         stock: "",
         category: "Tablet",
+        maxStock: "",
       });
 
       // Trigger refetch in parent component
@@ -212,7 +219,7 @@ function AddMedicineModal({ isOpen, onClose, scannedMedicine, openScanner, onMed
             <InputField
               label="Category *"
               as="select"
-              value={form.type}
+              value={form.category}
               onChange={(e) => setForm({ ...form, category: e.target.value })}
               disabled={loading}
             >
@@ -233,6 +240,15 @@ function AddMedicineModal({ isOpen, onClose, scannedMedicine, openScanner, onMed
               placeholder="0"
               min="0"
               required
+              disabled={loading}
+            />
+            <InputField
+              label="Max Stock (Optional)"
+              type="number"
+              value={form.maxStock}
+              onChange={(e) => setForm({ ...form, maxStock: e.target.value })}
+              placeholder="0"
+              min="0"
               disabled={loading}
             />
           </div>

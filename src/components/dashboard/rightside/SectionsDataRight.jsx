@@ -36,7 +36,6 @@ function SectionsDataRight({
       <Dashboard
         setActivePage={setActivePage}
         refetchTrigger={refetchTrigger}
-        alertsData={alertsData}
       />
     ),
 

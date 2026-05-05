@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Bell, Moon, UserCircle, ChevronDown, Menu } from "lucide-react";
+import { Bell,  UserCircle, ChevronDown, Menu } from "lucide-react";
 import InfoBadge from "./componant/InfoBadge";
 import { useAuth } from "../../../hooks/useAuth";
 import { useAlerts } from "../../../hooks/useAlerts";
@@ -77,15 +77,10 @@ function TopNav({ activePage, setIsSidebarOpen, setActivePage }) {
             )}
           </div>
           <span className="hidden sm:inline text-gray-700">
-            {alertCounts.active > 0
-              ? `${alertCounts.active} Alert${alertCounts.active !== 1 ? "s" : ""}`
-              : "Alerts"}
+            Alerts
           </span>
         </button>
 
-        <button className="p-2 rounded-lg hover:bg-gray-100 transition-colors duration-200">
-          <Moon className="w-5 h-5 text-gray-600" />
-        </button>
 
         <button
           onClick={() => handleClick("Profile")}

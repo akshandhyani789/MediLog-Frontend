@@ -2,7 +2,7 @@ import React from "react";
 import { Package, ChevronRight } from "lucide-react";
 import MedicineRow from "./MedicineRow";
 
-function InventoryMedicineCard({ medicines = [] }) {
+function InventoryMedicineCard({ medicines = [], handlePageChange }) {
 
   const processed = medicines.map((med) => {
     if (!med.expiryDate) {
@@ -44,9 +44,9 @@ function InventoryMedicineCard({ medicines = [] }) {
             <p className="text-xs text-gray-500 font-medium mt-0.5">Latest medicines in stock</p>
           </div>
         </div>
-        <a href="#" className="p-2 rounded-lg hover:bg-gray-100 transition-colors">
+        <p onClick={() => handlePageChange("MyMedicines")} className="p-2 rounded-lg hover:bg-gray-100 transition-colors">
           <ChevronRight className="w-5 h-5 text-gray-400" />
-        </a>
+        </p>
       </div>
 
       {/* Medicines List */}
@@ -59,10 +59,10 @@ function InventoryMedicineCard({ medicines = [] }) {
       {/* Footer */}
       {processed.length > 6 && (
         <div className="mt-4 pt-4 border-t border-gray-200">
-          <a href="#" className="text-sm font-semibold text-teal-600 hover:text-teal-700 transition-colors inline-flex items-center gap-1">
+          <p onClick={() => handlePageChange("MyMedicines")} className="text-sm font-semibold text-teal-600 hover:text-teal-700 transition-colors inline-flex items-center gap-1 cursor-pointer">
             View all medicines
             <ChevronRight className="w-4 h-4" />
-          </a>
+          </p>
         </div>
       )}
 

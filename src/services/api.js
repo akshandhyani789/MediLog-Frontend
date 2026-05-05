@@ -155,3 +155,20 @@ export const updateUserProfile = async (data) => {
     body: JSON.stringify(data),
   });
 };
+
+export const updateMedicineStock = async (firebaseUser, id, change) => {
+  if (!firebaseUser) {
+    throw new Error("User not logged in");
+  }
+
+  const token = await firebaseUser.getIdToken();
+
+  return safeFetch(`${BASE_URL}/api/user-medicines/${id}/stock`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify({ change: Number(change) }),
+  });
+};

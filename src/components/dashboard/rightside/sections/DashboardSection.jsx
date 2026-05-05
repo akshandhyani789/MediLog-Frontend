@@ -11,7 +11,7 @@ import { getUserMedicines } from "../../../../services/api";
 import { useAlertsData } from "../../../../hooks/useAlertData";
 import { useAlerts } from "../../../../hooks/useAlerts";
 
-function DashboardSection({ refetchTrigger = 0 }) {
+function DashboardSection({ setActivePage, refetchTrigger = 0 }) {
   const { user } = useAuth();
   const [medicines, setMedicines] = useState([]);
   const alertsData = useAlertsData(user);
@@ -27,6 +27,10 @@ function DashboardSection({ refetchTrigger = 0 }) {
   alertCounts,
   handleCheckAlert,
 } = useAlerts(alertsData);
+
+const handlePageChange = (page) => {
+  setActivePage(page);
+}
 
   useEffect(() => {
     const fetchData = async () => {
@@ -155,7 +159,7 @@ function DashboardSection({ refetchTrigger = 0 }) {
         <div className="mb-4">
           <p className="text-xs font-bold text-gray-500 uppercase tracking-widest letter-spacing-1">Inventory</p>
         </div>
-        <InventoryMedicineCard medicines={medicines} />
+        <InventoryMedicineCard medicines={medicines} handlePageChange={handlePageChange} />
       </div>
     </div>
   );
