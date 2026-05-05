@@ -22,38 +22,38 @@ function Dashboard() {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  return (
-    <div className="flex min-h-screen bg-gray-50">
-      <LeftSide
-        setActivePage={setActivePage}
-        activeNav={activePage}
-        isSidebarOpen={isSidebarOpen}
+ return (
+  <div className="flex min-h-screen w-full overflow-x-hidden bg-gray-50">
+    <LeftSide
+      setActivePage={setActivePage}
+      activeNav={activePage}
+      isSidebarOpen={isSidebarOpen}
+      setIsSidebarOpen={setIsSidebarOpen}
+    />
+
+    {isSidebarOpen && (
+      <div
+        className="fixed inset-0 bg-black/30 z-40 lg:hidden"
+        onClick={() => setIsSidebarOpen(false)}
+      />
+    )}
+
+    <main className="flex-1 min-w-0 w-full flex flex-col transition-all duration-300 ml-0 lg:ml-56 xl:ml-64 overflow-x-hidden">
+      <TopNav
+        activePage={activePage}
         setIsSidebarOpen={setIsSidebarOpen}
+        setActivePage={setActivePage}
       />
 
-      {isSidebarOpen && (
-        <div
-          className="fixed inset-0 bg-black/30 z-40 lg:hidden"
-          onClick={() => setIsSidebarOpen(false)}
-        />
-      )}
-
-      <div className="flex-1 flex flex-col transition-all duration-300 ml-0 lg:ml-56 xl:ml-64">
-        <TopNav
+      <div className="w-full max-w-full overflow-x-hidden px-2 py-3 sm:p-6 md:p-8">
+        <SectionsDataRight
           activePage={activePage}
-          setIsSidebarOpen={setIsSidebarOpen}
           setActivePage={setActivePage}
         />
-
-        <div className="p-4 sm:p-6 md:p-8">
-          <SectionsDataRight
-            activePage={activePage}
-            setActivePage={setActivePage}
-          />
-        </div>
       </div>
-    </div>
-  );
+    </main>
+  </div>
+);
 }
 
 export default Dashboard;
