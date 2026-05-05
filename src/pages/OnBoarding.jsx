@@ -1,5 +1,5 @@
-import React from 'react'
 import OnBoardingSection from '../components/onboarding/OnBoardingSection';
+
 function OnBoarding() {
   return (
     <div>

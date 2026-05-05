@@ -5,10 +5,9 @@ import {
   GoogleAuthProvider,
   signInWithPopup,
   signInWithRedirect,
-  getAdditionalUserInfo,
 } from "firebase/auth";
 import { auth } from "../firebase/firebase";
- import { sendUserToBackend } from "../services/api"; // ✅ add this
+import { sendUserToBackend } from "../services/api";
 
 
 function Login() {
@@ -17,47 +16,43 @@ function Login() {
   const [loading, setLoading] = useState(false);
   const isLoggingIn = useRef(false);
 
-const handleClick = async () => {
-  if (isLoggingIn.current) return;
-
-  try {
-    isLoggingIn.current = true;
-    setLoading(true);
-
-    const provider = new GoogleAuthProvider();
-    let result;
+  const handleClick = async () => {
+    if (isLoggingIn.current) return;
 
     try {
-      result = await signInWithPopup(auth, provider);
-    } catch (popupError) {
-      await signInWithRedirect(auth, provider);
-      return;
+      isLoggingIn.current = true;
+      setLoading(true);
+
+      const provider = new GoogleAuthProvider();
+      let result;
+
+      try {
+        result = await signInWithPopup(auth, provider);
+      } catch (popupError) {
+        await signInWithRedirect(auth, provider);
+        return;
+      }
+
+      const user = result.user;
+      const backendRes = await sendUserToBackend(user);
+
+      if (!backendRes) {
+        alert("Backend not connected");
+        return;
+      }
+
+      if (backendRes.isFirstLogin) {
+        navigate("/onboarding");
+      } else {
+        navigate("/dashboard");
+      }
+    } catch (error) {
+      console.error("Login error:", error);
+      alert("Login failed");
+      isLoggingIn.current = false;
+      setLoading(false);
     }
-
-    const user = result.user;
-
-    // 🔥 SEND TO BACKEND
-    const backendRes = await sendUserToBackend(user);
-
-if (!backendRes) {
-  alert("Backend not connected ❌");
-  return;
-}
-
-if (backendRes.isFirstLogin) {
-  navigate("/onboarding");
-} else {
-  navigate("/dashboard");
-}
-
-  } catch (error) {
-    console.error("Login error:", error);
-    alert("Login failed");
-
-    isLoggingIn.current = false;
-    setLoading(false);
-  }
-};
+  };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-[#F4F9F8] px-4 relative overflow-hidden">

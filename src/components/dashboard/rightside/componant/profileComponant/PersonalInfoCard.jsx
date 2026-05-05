@@ -3,33 +3,46 @@ import DataField from "./DataField";
 import EditButton from "./EditButton";
 import { isValidIndianPhone } from "../../../../../utils/phoneValidator";
 import { updateUserProfile } from "../../../../../services/api";
+import { useAuth } from "../../../../../hooks/useAuth";
 
 const PersonalInfoCard = ({ user, setUser }) => {
   const [isEditing, setIsEditing] = useState(false);
+  const { userData, setUserData } = useAuth();
+  const userRole = userData?.role || user?.role || "individual";
+
   const [phoneError, setPhoneError] = useState("");
-  const [userData, setUserData] = useState({
+
+  const [userInfo, setUserInfo] = useState({
     fullName: "",
+    ownerName: "",
+    businessName: "",
     email: "",
     phone: "",
+    businessPhone: "",
   });
 
   useEffect(() => {
-    if (user) {
-      setUserData({
-        fullName: user.fullName || user.name || "",
-        email: user.email || "",
-        phone: user.phone || "",
+    const currentUser = userData || user;
+
+    if (currentUser) {
+      setUserInfo({
+        fullName: currentUser.fullName || currentUser.name || "",
+        ownerName: currentUser.ownerName || currentUser.name || "",
+        businessName: currentUser.businessName || "",
+        email: currentUser.email || "",
+        phone: currentUser.phone || "",
+        businessPhone: currentUser.businessPhone || currentUser.phone || "",
       });
     }
-  }, [user]);
+  }, [user, userData]);
 
   const handleChange = (field, value) => {
-    if (field === "phone") {
+    if (field === "phone" || field === "businessPhone") {
       const onlyDigits = value.replace(/\D/g, "").slice(0, 10);
 
-      setUserData((prev) => ({
+      setUserInfo((prev) => ({
         ...prev,
-        phone: onlyDigits,
+        [field]: onlyDigits,
       }));
 
       if (onlyDigits.length === 10 && !isValidIndianPhone(onlyDigits)) {
@@ -41,53 +54,68 @@ const PersonalInfoCard = ({ user, setUser }) => {
       return;
     }
 
-    setUserData((prev) => ({
+    setUserInfo((prev) => ({
       ...prev,
       [field]: value,
     }));
   };
 
-  const handleEdit = async () => {
-    if (!isEditing) {
-      setIsEditing(true);
-      return;
-    }
+ const handleEdit = async () => {
+  if (!isEditing) {
+    setIsEditing(true);
+    return;
+  }
 
-    if (!isValidIndianPhone(userData.phone)) {
-      setPhoneError("Enter a valid 10-digit Indian mobile number.");
-      return;
-    }
+  const phoneToValidate =
+    userRole === "vendor" ? userInfo.businessPhone : userInfo.phone;
 
-    try {
-      const res = await updateUserProfile({
-        name: userData.fullName,
-        phone: userData.phone,
-      });
+  if (!isValidIndianPhone(phoneToValidate)) {
+    setPhoneError("Enter a valid 10-digit Indian mobile number.");
+    return;
+  }
 
-      const updatedUser = {
-        ...user,
-        ...res,
-        fullName: res.fullName || res.name || userData.fullName,
-        name: res.name || userData.fullName,
-        email: res.email || userData.email,
-        phone: res.phone || userData.phone,
-      };
+  try {
+    const payload =
+      userRole === "vendor"
+        ? {
+            name: userInfo.ownerName,
+            ownerName: userInfo.ownerName,
+            businessName: userInfo.businessName,
+            businessPhone: userInfo.businessPhone,
+            phone: userInfo.businessPhone,
+          }
+        : {
+            name: userInfo.fullName,
+            fullName: userInfo.fullName,
+            phone: userInfo.phone,
+          };
 
-      setUser(updatedUser);
-      setUserData({
-        fullName: updatedUser.fullName || updatedUser.name || "",
-        email: updatedUser.email || "",
-        phone: updatedUser.phone || "",
-      });
+    const res = await updateUserProfile(payload);
 
-      setIsEditing(false);
-      setPhoneError("");
-    } catch (err) {
-      console.error("❌ Profile update failed:", err);
-    }
-  };
+    const updatedUser = { ...res };
 
-  if (!user) return null;
+    if (setUser) setUser(updatedUser);
+
+    // 🔥 MOST IMPORTANT FIX
+    setUserData(updatedUser);
+
+    setUserInfo({
+      fullName: updatedUser.fullName || updatedUser.name || "",
+      ownerName: updatedUser.ownerName || updatedUser.name || "",
+      businessName: updatedUser.businessName || "",
+      email: updatedUser.email || "",
+      phone: updatedUser.phone || "",
+      businessPhone: updatedUser.businessPhone || updatedUser.phone || "",
+    });
+
+    setIsEditing(false);
+    setPhoneError("");
+
+  } catch (err) {
+    console.error("❌ Profile update failed:", err);
+  }
+};
+  if (!user && !userData) return null;
 
   return (
     <section className="w-full">
@@ -110,16 +138,34 @@ const PersonalInfoCard = ({ user, setUser }) => {
         <div className="h-px bg-gradient-to-r from-transparent via-gray-200 to-transparent mb-8" />
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
-          <DataField
-            label="Full Name"
-            value={userData.fullName}
-            isEditing={isEditing}
-            onChange={(val) => handleChange("fullName", val)}
-          />
+          {userRole === "vendor" && (
+            <DataField
+              label="Business Name"
+              value={userInfo.businessName}
+              isEditing={isEditing}
+              onChange={(val) => handleChange("businessName", val)}
+            />
+          )}
+
+          {userRole === "vendor" ? (
+            <DataField
+              label="Owner Name"
+              value={userInfo.ownerName}
+              isEditing={isEditing}
+              onChange={(val) => handleChange("ownerName", val)}
+            />
+          ) : (
+            <DataField
+              label="Full Name"
+              value={userInfo.fullName}
+              isEditing={isEditing}
+              onChange={(val) => handleChange("fullName", val)}
+            />
+          )}
 
           <DataField
             label="Email Address"
-            value={userData.email}
+            value={userInfo.email}
             isEditing={isEditing}
             onChange={(val) => handleChange("email", val)}
             isDisable={true}
@@ -127,10 +173,19 @@ const PersonalInfoCard = ({ user, setUser }) => {
 
           <div>
             <DataField
-              label="Phone Number"
-              value={userData.phone}
+              label={userRole === "vendor" ? "Business Phone" : "Phone Number"}
+              value={
+                userRole === "vendor"
+                  ? userInfo.businessPhone
+                  : userInfo.phone
+              }
               isEditing={isEditing}
-              onChange={(val) => handleChange("phone", val)}
+              onChange={(val) =>
+                handleChange(
+                  userRole === "vendor" ? "businessPhone" : "phone",
+                  val
+                )
+              }
             />
 
             {phoneError && (

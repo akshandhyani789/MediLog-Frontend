@@ -1,4 +1,3 @@
-import React from "react";
 import { Bell, Users } from "lucide-react";
 import FeatureCard from "./featureSectionComponants/FeatureCard";
 
@@ -6,28 +5,14 @@ const Features = () => {
   return (
     <section
       id="features"
-      className="
-        relative overflow-hidden
-        bg-gradient-to-b from-slate-50 via-white to-slate-50
-        py-24 px-6
-      "
+      className="relative overflow-hidden bg-gradient-to-b from-slate-50 via-white to-slate-50 py-24 px-6"
     >
-      {/* background glow */}
       <div className="absolute top-[-120px] right-[-120px] w-[400px] h-[400px] bg-teal-200 blur-[160px] opacity-30 rounded-full"></div>
       <div className="absolute bottom-[-150px] left-[-150px] w-[450px] h-[450px] bg-blue-200 blur-[180px] opacity-30 rounded-full"></div>
 
-      <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-10 relative ">
+      <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-10 relative">
         
-        {/* Left side Big Card */}
-        <div
-          className="
-            bg-gradient-to-br from-[#0F766E] to-[#134E4A]
-            text-white rounded-3xl p-10 md:p-12
-            shadow-2xl
-            hover:scale-[1.02] transition-all duration-300
-            border border-white/10
-          "
-        >
+        <div className="bg-gradient-to-br from-[#0F766E] to-[#134E4A] text-white rounded-3xl p-10 md:p-12 shadow-2xl hover:scale-[1.02] transition-all duration-300 border border-white/10">
           <div className="w-14 h-14 bg-white/10 backdrop-blur-md rounded-xl flex items-center justify-center mb-6 text-xl">
             📊
           </div>
@@ -48,10 +33,7 @@ const Features = () => {
           </ul>
         </div>
 
-        {/* Right Side Cards */}
         <div className="space-y-8">
-          
-          {/* Alerts Card */}
           <div className="hover:-translate-y-1 transition duration-300">
             <FeatureCard
               icon={<Bell className="text-yellow-500" />}
@@ -65,7 +47,6 @@ const Features = () => {
             </FeatureCard>
           </div>
 
-          {/* Status Card */}
           <div className="hover:-translate-y-1 transition duration-300">
             <FeatureCard
               icon={<Users className="text-green-600" />}
@@ -73,19 +54,12 @@ const Features = () => {
               description="Color-coded system makes it instantly clear which medicines are safe, which need attention, and which must be replaced."
             >
               <div className="flex gap-4">
-                <div className="flex-1 bg-green-100 text-green-700 text-center py-3 rounded-xl">
-                  ● Safe
-                </div>
-                <div className="flex-1 bg-yellow-100 text-yellow-700 text-center py-3 rounded-xl">
-                  ● Soon
-                </div>
-                <div className="flex-1 bg-red-100 text-red-700 text-center py-3 rounded-xl">
-                  ● Expired
-                </div>
+                <div className="flex-1 bg-green-100 text-green-700 text-center py-3 rounded-xl">● Safe</div>
+                <div className="flex-1 bg-yellow-100 text-yellow-700 text-center py-3 rounded-xl">● Soon</div>
+                <div className="flex-1 bg-red-100 text-red-700 text-center py-3 rounded-xl">● Expired</div>
               </div>
             </FeatureCard>
           </div>
-
         </div>
       </div>
     </section>

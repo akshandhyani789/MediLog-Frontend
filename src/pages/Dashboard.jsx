@@ -2,28 +2,19 @@ import { useState, useEffect } from "react";
 import TopNav from "../components/dashboard/rightside/TopNav";
 import LeftSide from "../components/dashboard/leftside/LeftSide";
 import SectionsDataRight from "../components/dashboard/rightside/SectionsDataRight";
-import { useAuth } from "../context/AuthContext";
+import { useAuth } from "../hooks/useAuth";
 
 function Dashboard() {
   const [activePage, setActivePage] = useState("Dashboard");
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   const { userData } = useAuth();
-  const [userRole, setUserRole] = useState(null);
+  const userRole = userData?.role || "individual";
 
-  // ✅ Set role
-  useEffect(() => {
-    if (userData?.role) {
-      setUserRole(userData.role);
-      console.log("User role set to:", userData.role);
-    }
-  }, [userData]);
-
-  // ✅ FIX: Auto close sidebar when resizing to desktop
   useEffect(() => {
     const handleResize = () => {
       if (window.innerWidth >= 1024) {
-        setIsSidebarOpen(false); // reset mobile state
+        setIsSidebarOpen(false);
       }
     };
 
@@ -33,8 +24,6 @@ function Dashboard() {
 
   return (
     <div className="flex min-h-screen bg-gray-50">
-
-      {/* 🔥 Sidebar */}
       <LeftSide
         setActivePage={setActivePage}
         activeNav={activePage}
@@ -42,7 +31,6 @@ function Dashboard() {
         setIsSidebarOpen={setIsSidebarOpen}
       />
 
-      {/* 🔥 Overlay (Mobile only) */}
       {isSidebarOpen && (
         <div
           className="fixed inset-0 bg-black/30 z-40 lg:hidden"
@@ -50,22 +38,13 @@ function Dashboard() {
         />
       )}
 
-      {/* 🔥 Main Content */}
-      <div
-        className={`
-          flex-1 flex flex-col transition-all duration-300
-          ml-0
-          lg:ml-56 xl:ml-64
-        `}
-      >
-        {/* 🔥 Top Nav */}
+      <div className="flex-1 flex flex-col transition-all duration-300 ml-0 lg:ml-56 xl:ml-64">
         <TopNav
           activePage={activePage}
           setIsSidebarOpen={setIsSidebarOpen}
           setActivePage={setActivePage}
         />
 
-        {/* 🔥 Page Content */}
         <div className="p-4 sm:p-6 md:p-8">
           <SectionsDataRight
             activePage={activePage}

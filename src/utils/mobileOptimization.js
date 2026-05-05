@@ -1,5 +1,5 @@
 /**
- * ✅ Mobile Optimization Utilities
+ * Mobile Optimization Utilities
  * Handles responsive design, touch interactions, and mobile-specific optimizations
  */
 
@@ -258,7 +258,7 @@ export function setupMobileEventListeners() {
  * Log mobile/network information for debugging
  */
 export function logMobileInfo() {
-  console.log("[Mobile Info]", {
+  console.log("Mobile Optimization Info:", {
     isMobile: isMobileDevice(),
     screenSize: getScreenSize(),
     orientation: getDeviceOrientation(),

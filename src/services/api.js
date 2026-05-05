@@ -1,14 +1,8 @@
 import { getAPIBaseURL } from "../utils/ipDetection.js";
 import { auth } from "../firebase/firebase.js";
-// ------------------ BASE URL ------------------
 
 const cleanURL = (url) => url.replace(/\/+$/, "");
-
-// ✅ define once (IMPORTANT FIX)
 const BASE_URL = cleanURL(getAPIBaseURL());
-console.log("🌐 API Base URL:", BASE_URL);
-
-// ------------------ SAFE FETCH ------------------
 
 const safeFetch = async (url, options = {}) => {
   try {
@@ -30,7 +24,7 @@ const safeFetch = async (url, options = {}) => {
     return data;
 
   } catch (err) {
-    console.error("❌ Fetch failed:", url, err.message);
+    console.error("Fetch failed:", url, err.message);
 
     if (err.message.includes("Failed to fetch")) {
       throw new Error("Backend not reachable. Is server running?");
@@ -39,8 +33,6 @@ const safeFetch = async (url, options = {}) => {
     throw err;
   }
 };
-
-// ------------------ API ------------------
 
 export const getMedicineByBarcode = (barcode) =>
   safeFetch(`${BASE_URL}/api/medicines/${barcode}`);
@@ -70,8 +62,8 @@ export const sendUserToBackend = async (firebaseUser) => {
     });
 
   } catch (error) {
-    console.error("❌ Backend login failed:", error.message);
-    return null; // ✅ prevents app crash
+    console.error("Backend login failed:", error.message);
+    return null;
   }
 };
 
@@ -122,7 +114,6 @@ export const deleteUserMedicine = async (firebaseUser, id) => {
   });
 };
 
-// 📥 Get notification settings
 export const getNotificationSettings = async (firebaseUser) => {
   const token = await firebaseUser.getIdToken();
 
@@ -133,7 +124,6 @@ export const getNotificationSettings = async (firebaseUser) => {
   });
 };
 
-// 💾 Update notification settings
 export const updateNotificationSettings = async (firebaseUser, data) => {
   const token = await firebaseUser.getIdToken();
 

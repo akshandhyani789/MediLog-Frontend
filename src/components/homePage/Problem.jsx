@@ -1,4 +1,3 @@
-import React from "react";
 import ProblemCard from "./problemSectionCard/ProblemCard";
 import { AlertTriangle, DollarSign, Heart } from "lucide-react";
 
@@ -33,14 +32,8 @@ function Problem() {
   return (
     <div
       id="problem"
-      className="
-        relative overflow-hidden
-        py-24 px-6 lg:px-32
-        flex flex-col gap-6 text-center items-center
-        bg-gradient-to-b from-white via-slate-50 to-white
-      "
+      className="relative overflow-hidden py-24 px-6 lg:px-32 flex flex-col gap-6 text-center items-center bg-gradient-to-b from-white via-slate-50 to-white"
     >
-      {/* subtle background glow */}
       <div className="absolute top-[-120px] left-1/2 -translate-x-1/2 w-[400px] h-[400px] bg-teal-200 blur-[150px] opacity-30 rounded-full"></div>
 
       <h3 className="text-sm md:text-base font-semibold tracking-widest text-[#0F766E] uppercase">

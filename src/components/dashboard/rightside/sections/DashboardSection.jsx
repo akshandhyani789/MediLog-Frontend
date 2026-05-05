@@ -6,14 +6,27 @@ import StatCard from "../componant/dashboardComponants/StatCard";
 import InventoryMedicineCard from "../componant/dashboardComponants/InventoryMedicineCard";
 import CompositionChart from "../componant/dashboardComponants/CompositionChart";
 import RiskChart from "../componant/dashboardComponants/RiskChart";
-import { useAuth } from "../../../../context/AuthContext";
+import { useAuth } from "../../../../hooks/useAuth";
 import { getUserMedicines } from "../../../../services/api";
+import { useAlertsData } from "../../../../hooks/useAlertData";
+import { useAlerts } from "../../../../hooks/useAlerts";
 
 function DashboardSection({ refetchTrigger = 0 }) {
   const { user } = useAuth();
   const [medicines, setMedicines] = useState([]);
+  const alertsData = useAlertsData(user);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+
+  
+    const {
+  loading: alertsLoading,
+  visibleAlerts,
+  criticalAlerts,
+  warningAlerts,
+  alertCounts,
+  handleCheckAlert,
+} = useAlerts(alertsData);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -43,22 +56,12 @@ function DashboardSection({ refetchTrigger = 0 }) {
 
   const totalMedicines = medicines.length;
 
-  const activeAlerts = medicines.filter(
-    (med) =>
-      med.stock < 5 ||
-      (med.expiryDate && new Date(med.expiryDate) < new Date())
-  ).length;
-
   const lowStock = medicines.filter((med) => med.stock < 5).length;
 
   const expiringSoon = medicines.filter((med) => {
     if (!med.expiryDate) return false;
-
-    const expiry = new Date(med.expiryDate);
-    const now = new Date();
-    const diffDays = (expiry - now) / (1000 * 60 * 60 * 24);
-
-    return diffDays > 0 && diffDays <= 30;
+    const diff = (new Date(med.expiryDate) - new Date()) / (1000 * 60 * 60 * 24);
+    return diff > 0 && diff <= 30;
   }).length;
 
   if (loading) {
@@ -107,7 +110,7 @@ function DashboardSection({ refetchTrigger = 0 }) {
 
           <StatCard
             title="Active Alerts"
-            value={activeAlerts}
+            value={alertCounts.active}
             subtitle="require attention"
             icon={AlertTriangle}
             valueColor="text-red-600"

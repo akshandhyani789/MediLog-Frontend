@@ -1,14 +1,12 @@
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
-import { Activity } from "lucide-react";
 import Logo from "../Logo";
 import MedilogLoader from "../MedilogLoader";
 
-function Navbar({ btnData, UserLogedIn }) {
+function Navbar({ btnData }) {
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 
-  // Function to handle Login/Signup click
   const handelJoin = () => {
     setIsLoading(true);
     setTimeout(() => {
@@ -17,44 +15,30 @@ function Navbar({ btnData, UserLogedIn }) {
     }, 2000);
   };
 
-  // Simplified Scroll Function (Fixed to prevent re-render loops)
   const handleScroll = (id, e) => {
     if (e) e.preventDefault();
     const element = document.getElementById(id);
     if (element) {
-      element.scrollIntoView({
-        behavior: "smooth",
-      });
+      element.scrollIntoView({ behavior: "smooth" });
     }
   };
 
-  const [isDarkMode, setIsDarkMode] = useState(false); // Assuming dark mode is default
-
   return (
     <nav className="flex justify-around items-center p-4 md:fixed w-full bg-white shadow-md z-10">
-      {/* Logo Section */}
-      <Logo handleScroll={handleScroll} isDarkMode={isDarkMode}/>
+      <Logo handleScroll={handleScroll} />
 
-      {/* Navigation Links */}
       <ul className="gap-6 hidden md:flex items-center text-md md:text-lg font-medium">
         <li className="hover:text-[#0F766E] cursor-pointer hover:scale-105 transition-all duration-75">
-          <a href="#hero" onClick={(e) => handleScroll("hero", e)}>
-            Home
-          </a>
+          <a href="#hero" onClick={(e) => handleScroll("hero", e)}>Home</a>
         </li>
         <li className="hover:text-[#0F766E] cursor-pointer hover:scale-105 transition-all duration-75">
-          <a href="#features" onClick={(e) => handleScroll("features", e)}>
-            Features
-          </a>
+          <a href="#features" onClick={(e) => handleScroll("features", e)}>Features</a>
         </li>
         <li className="hover:text-[#0F766E] cursor-pointer hover:scale-105 transition-all duration-75">
-          <a href="#about" onClick={(e) => handleScroll("about", e)}>
-            About
-          </a>
+          <a href="#about" onClick={(e) => handleScroll("about", e)}>About</a>
         </li>
       </ul>
 
-      {/* Conditional Buttons (If/Else logic) */}
       <div className="flex items-center gap-4">
         <button
           onClick={handelJoin}
@@ -70,10 +54,7 @@ function Navbar({ btnData, UserLogedIn }) {
         </button>
       </div>
 
-      {/* Loading Overlay */}
-      {isLoading && (
-        <MedilogLoader />
-      )}
+      {isLoading && <MedilogLoader />}
     </nav>
   );
 }

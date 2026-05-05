@@ -5,23 +5,18 @@ import { useAuth } from "../hooks/useAuth";
 
 export const useNavigation = () => {
   const navigate = useNavigate();
-  const { setIsOnboarded, setUserData } = useAuth(); // ✅ IMPORTANT
-
+  const { setIsOnboarded, setUserData } = useAuth();
 
   const completeOnboardingAndGoToDashboard = async (data) => {
     try {
       const user = auth.currentUser;
-
       const res = await completeOnboarding(user, data);
 
-      console.log("Onboarding response:", res);
-
-      // ✅ UPDATE STATE INSTANTLY
       setIsOnboarded(true);
-      setUserData(res.user); // ✅ UPDATE FULL USER DATA
+      setUserData(res.user);
       setTimeout(() => {
-      navigate("/dashboard");
-      }, 500); // ✅ small delay for better UX
+        navigate("/dashboard");
+      }, 500);
     } catch (error) {
       console.error("Onboarding error:", error);
     }

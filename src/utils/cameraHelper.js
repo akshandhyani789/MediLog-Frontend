@@ -206,7 +206,6 @@ export function stopCameraStream(stream) {
     stream.getTracks().forEach((track) => {
       try {
         track.stop();
-        console.log("[Camera] 🛑 Stopped track:", track.kind);
       } catch (err) {
         console.warn("[Camera] Warning stopping track:", err.message);
       }
@@ -227,16 +226,13 @@ export function getErrorDisplay(errorType) {
 export async function debugCameraCapabilities() {
   try {
     if (!navigator.mediaDevices?.enumerateDevices) {
-      console.log("[Camera] enumerateDevices not available");
       return;
     }
 
     const devices = await navigator.mediaDevices.enumerateDevices();
     const videoDevices = devices.filter((device) => device.kind === "videoinput");
 
-    console.log("[Camera] Available video devices:", videoDevices.length);
     videoDevices.forEach((device, index) => {
-      console.log(`  [${index}] ${device.label || "Unknown"} (${device.deviceId.substring(0, 8)}...)`);
     });
   } catch (err) {
     console.warn("[Camera] Error enumerating devices:", err.message);
@@ -268,18 +264,8 @@ export function initCameraDebugging() {
                      hostname === '::1';
   const isLocalNetwork = /^(192\.168\.|10\.|172\.(1[6-9]|2[0-9]|3[01])\.)\d+\.\d+$/.test(hostname);
   
-  console.log("[Camera] 🎥 Camera System Initialized");
-  console.log("[Camera] 🔒 Secure origin:", isSecureOrigin());
-  console.log("[Camera] 📱 Protocol:", window.location.protocol);
-  console.log("[Camera] 🌐 Hostname:", window.location.hostname);
-  console.log("[Camera] ✅ HTTPS:", isHttps);
-  console.log("[Camera] ✅ Localhost:", isLocalhost);
-  console.log("[Camera] ✅ Local Network:", isLocalNetwork);
-  
   if (navigator.mediaDevices?.ondevicechange) {
-    console.log("[Camera] 🔔 Device change listener available");
     navigator.mediaDevices.addEventListener("devicechange", () => {
-      console.log("[Camera] 🔄 Camera devices changed");
       debugCameraCapabilities();
     });
   }
