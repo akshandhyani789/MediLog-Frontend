@@ -20,7 +20,7 @@ function Join({ btnData }) {
       className="relative overflow-hidden bg-[#0F766E] text-white flex flex-col justify-center items-center py-24 px-6 md:px-20 text-center"
     >
       <div className="relative flex flex-col items-center gap-6 max-w-4xl">
-        <h1 className="text-4xl font-bold lg:text-6xl leading-tight">
+        <h1 className="text-3xl font-bold lg:text-6xl leading-tight">
           Ready to secure your medicine cabinet?
         </h1>
 

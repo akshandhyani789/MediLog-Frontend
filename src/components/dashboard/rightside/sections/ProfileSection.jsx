@@ -33,7 +33,7 @@ function Profile() {
   }
 
   return (
-    <div className="p-6 sm:p-8 space-y-8 bg-gradient-to-br from-gray-50 to-white min-h-screen">
+    <div className="p-6 sm:p-8 space-y-8  min-h-screen">
       <div className="flex items-center gap-3 mb-2">
         <Settings className="w-8 h-8 text-teal-600" />
         <div>

@@ -1,33 +1,35 @@
 import ProblemCard from "./problemSectionCard/ProblemCard";
-import { AlertTriangle, DollarSign, Heart } from "lucide-react";
+import { AlertTriangle, DollarSign, Heart, Bell, ClipboardList } from "lucide-react";
 
 function Problem() {
   const problems = [
-    {
-      icon: Heart,
-      title: "Health Hazards",
-      description:
-        "Expired medications can lose potency or become harmful, putting your family's health at serious risk.",
-      color: "from-red-500 to-rose-600",
-      bgColor: "bg-red-50",
-    },
-    {
-      icon: DollarSign,
-      title: "Financial Loss",
-      description:
-        "The average household wastes $200+ annually on medicines that expire before use. Money down the drain.",
-      color: "from-amber-500 to-orange-600",
-      bgColor: "bg-amber-50",
-    },
-    {
-      icon: AlertTriangle,
-      title: "Emergency Readiness",
-      description:
-        "When you need medicine urgently, discovering it's expired can delay critical treatment.",
-      color: "from-blue-500 to-indigo-600",
-      bgColor: "bg-blue-50",
-    },
-  ];
+  {
+    icon: AlertTriangle,
+    title: "Expired Medicines at Home",
+    description:
+      "Many people unknowingly consume expired medicines because they forget expiry dates or fail to track them properly.",
+    color: "from-red-500 to-rose-600",
+    bgColor: "bg-red-50",
+  },
+
+  {
+    icon: Bell,
+    title: "No Reminder System",
+    description:
+      "Traditional medicine storage provides no alerts or notifications when medicines are about to expire or run out.",
+    color: "from-teal-500 to-cyan-600",
+    bgColor: "bg-teal-50",
+  },
+
+  {
+    icon: ClipboardList,
+    title: "Poor Medicine Management",
+    description:
+      "Managing prescriptions, stock levels, and medicine records manually becomes difficult, especially for families and vendors.",
+    color: "from-blue-500 to-indigo-600",
+    bgColor: "bg-blue-50",
+  },
+];
 
   return (
     <div
@@ -50,22 +52,22 @@ function Problem() {
         risks and financial waste. It's time to take control.
       </p>
 
-      <div className="flex gap-8 flex-col lg:flex-row items-stretch justify-center mt-12 w-full max-w-6xl">
-        {problems.map((problem, index) => (
-          <div
-            key={index}
-            className="transform hover:-translate-y-2 transition duration-300"
-          >
-            <ProblemCard
-              icon={problem.icon}
-              title={problem.title}
-              description={problem.description}
-              color={problem.color}
-              bgColor={problem.bgColor}
-            />
-          </div>
-        ))}
-      </div>
+      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8 mt-12 w-full max-w-6xl mx-auto place-items-center">
+  {problems.map((problem, index) => (
+    <div
+      key={index}
+      className="w-full max-w-sm transform hover:-translate-y-2 transition duration-300"
+    >
+      <ProblemCard
+        icon={problem.icon}
+        title={problem.title}
+        description={problem.description}
+        color={problem.color}
+        bgColor={problem.bgColor}
+      />
+    </div>
+  ))}
+</div>
     </div>
   );
 }

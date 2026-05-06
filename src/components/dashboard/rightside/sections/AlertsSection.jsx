@@ -22,7 +22,7 @@ function AlertsSection({ alertsData }) {
   }
 
   return (
-    <div className="p-6 sm:p-8 space-y-8 bg-gradient-to-br from-gray-50 to-white min-h-screen">
+    <div className="p-6 sm:p-8 space-y-8  min-h-screen">
       <div>
         <h1 className="text-3xl sm:text-4xl font-bold text-gray-900">
           Alerts & Notifications

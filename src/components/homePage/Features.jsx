@@ -1,11 +1,11 @@
-import { Bell, Users } from "lucide-react";
+import { Bell, Users, PackageSearch } from "lucide-react";
 import FeatureCard from "./featureSectionComponants/FeatureCard";
 
 const Features = () => {
   return (
     <section
       id="features"
-      className="relative overflow-hidden bg-gradient-to-b from-slate-50 via-white to-slate-50 py-24 px-6"
+      className="relative overflow-hidden bg-gradient-to-b from-slate-50 via-white to-slate-50 py-24 px-10 sm:px-12 lg:px-24"
     >
       <div className="absolute top-[-120px] right-[-120px] w-[400px] h-[400px] bg-teal-200 blur-[160px] opacity-30 rounded-full"></div>
       <div className="absolute bottom-[-150px] left-[-150px] w-[450px] h-[450px] bg-blue-200 blur-[180px] opacity-30 rounded-full"></div>
@@ -48,18 +48,26 @@ const Features = () => {
           </div>
 
           <div className="hover:-translate-y-1 transition duration-300">
-            <FeatureCard
-              icon={<Users className="text-green-600" />}
-              title="Visual Status Indicators"
-              description="Color-coded system makes it instantly clear which medicines are safe, which need attention, and which must be replaced."
-            >
-              <div className="flex gap-4">
-                <div className="flex-1 bg-green-100 text-green-700 text-center py-3 rounded-xl">● Safe</div>
-                <div className="flex-1 bg-yellow-100 text-yellow-700 text-center py-3 rounded-xl">● Soon</div>
-                <div className="flex-1 bg-red-100 text-red-700 text-center py-3 rounded-xl">● Expired</div>
-              </div>
-            </FeatureCard>
-          </div>
+  <FeatureCard
+    icon={<PackageSearch className="text-teal-600" />}
+    title="Smart Barcode Integration"
+    description="Instantly scan medicine barcodes to auto-fetch medicine details, reduce manual entry, and manage inventory faster with accuracy."
+  >
+    <div className="flex gap-4">
+      <div className="flex-1 bg-teal-100 text-teal-700 text-center py-3 rounded-xl font-medium">
+        📷 Scan
+      </div>
+
+      <div className="flex-1 bg-blue-100 text-blue-700 text-center py-3 rounded-xl font-medium">
+        ⚡ Fetch
+      </div>
+
+      <div className="flex-1 bg-green-100 text-green-700 text-center py-3 rounded-xl font-medium">
+        ✅ Save
+      </div>
+    </div>
+  </FeatureCard>
+</div>
         </div>
       </div>
     </section>

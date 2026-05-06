@@ -74,7 +74,7 @@ function UserMedicineSection({ refetchTrigger = 0 }) {
   });
 
   return (
-  <div className="p-4 sm:p-6 space-y-6 bg-gradient-to-br from-gray-50 to-white min-h-screen">
+  <div className="p-4 sm:p-6 space-y-6 min-h-screen">
 
     {/* 🔥 HEADER */}
     <div className="flex items-start sm:items-center gap-3">

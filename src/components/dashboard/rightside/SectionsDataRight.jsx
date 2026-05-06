@@ -14,12 +14,8 @@ import { getMedicineByBarcode } from "../../../services/api";
 import { useAlertsData } from "../../../hooks/useAlertData";
 import { useAuth } from "../../../hooks/useAuth";
 
-function SectionsDataRight({
-  activePage,
-  setActivePage,
-}) {
-
-  const { userData } = useAuth();
+function SectionsDataRight({ activePage, setActivePage }) {
+  const { userData, user } = useAuth();
   const userRole = userData?.role || "individual";
 
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -28,7 +24,6 @@ function SectionsDataRight({
   const [scannedMedicine, setScannedMedicine] = useState(null);
   const [refetchTrigger, setRefetchTrigger] = useState(0);
 
-  const { user } = useAuth();
   const alertsData = useAlertsData(user);
 
   const commonPages = {
@@ -38,11 +33,8 @@ function SectionsDataRight({
         refetchTrigger={refetchTrigger}
       />
     ),
-
     MyMedicines: <UserMedicineSection refetchTrigger={refetchTrigger} />,
-
     Alerts: <Alerts alertsData={alertsData} />,
-
     Profile: <Profile />,
   };
 
@@ -83,8 +75,15 @@ function SectionsDataRight({
   }, []);
 
   return (
-    <div className="flex-1 bg-gradient-to-br from-gray-50 to-white min-h-[calc(100vh-64px)] overflow-y-auto">
-      <div className="p-4">{pages[activePage] || pages.Dashboard}</div>
+    <div className="relative min-h-[calc(100vh-64px)] w-full overflow-y-auto bg-gradient-to-br from-slate-50 via-teal-50 to-slate-100">
+      <div className="absolute inset-0 opacity-40 pointer-events-none overflow-hidden">
+        <div className="absolute top-[-100px] left-[-100px] w-[300px] h-[300px] bg-teal-300 blur-[120px] rounded-full" />
+        <div className="absolute bottom-[-120px] right-[-120px] w-[350px] h-[350px] bg-blue-300 blur-[140px] rounded-full" />
+      </div>
+
+      <div className="relative z-10 min-h-[calc(100vh-64px)]">
+        {pages[activePage] || pages.Dashboard}
+      </div>
 
       <FloatingButton onClick={handleOpenModal} />
 

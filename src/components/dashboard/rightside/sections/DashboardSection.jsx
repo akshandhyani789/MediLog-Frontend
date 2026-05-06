@@ -70,7 +70,7 @@ const handlePageChange = (page) => {
 
   if (loading) {
     return (
-      <div className="w-full max-w-full overflow-x-hidden px-3 py-4 sm:p-8 space-y-6 bg-gradient-to-br from-gray-50 to-white min-h-screen flex items-center justify-center">
+      <div className="w-full max-w-full overflow-x-hidden px-3 py-4 sm:p-8 space-y-6  min-h-screen flex items-center justify-center">
         <div className="text-center">
           <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-teal-100 mb-3">
             <div className="w-8 h-8 border-3 border-teal-200 border-t-teal-600 rounded-full animate-spin" />
@@ -82,7 +82,7 @@ const handlePageChange = (page) => {
   }
 
   return (
-    <div className="p-6 sm:p-8 space-y-8 min-h-screen bg-gradient-to-br from-gray-50 to-white">
+    <div className="p-6 sm:p-8 space-y-8 min-h-screen ">
       
       {/* Error Message */}
       {error && (

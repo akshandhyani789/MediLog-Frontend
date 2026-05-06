@@ -22,38 +22,39 @@ function Dashboard() {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
- return (
-  <div className="flex min-h-screen w-full overflow-x-hidden bg-gray-50">
-    <LeftSide
-      setActivePage={setActivePage}
-      activeNav={activePage}
-      isSidebarOpen={isSidebarOpen}
-      setIsSidebarOpen={setIsSidebarOpen}
-    />
-
-    {isSidebarOpen && (
-      <div
-        className="fixed inset-0 bg-black/30 z-40 lg:hidden"
-        onClick={() => setIsSidebarOpen(false)}
-      />
-    )}
-
-    <main className="flex-1 min-w-0 w-full flex flex-col transition-all duration-300 ml-0 lg:ml-56 xl:ml-64 overflow-x-hidden">
-      <TopNav
-        activePage={activePage}
-        setIsSidebarOpen={setIsSidebarOpen}
+  return (
+    <div className="flex min-h-screen w-full overflow-x-hidden bg-gradient-to-br from-slate-50 via-teal-50 to-slate-100">
+      <LeftSide
         setActivePage={setActivePage}
+        activeNav={activePage}
+        isSidebarOpen={isSidebarOpen}
+        setIsSidebarOpen={setIsSidebarOpen}
       />
 
-      <div className="w-full max-w-full overflow-x-hidden px-2 py-3 sm:p-6 md:p-8">
-        <SectionsDataRight
+      {isSidebarOpen && (
+        <div
+          className="fixed inset-0 bg-black/30 z-40 lg:hidden"
+          onClick={() => setIsSidebarOpen(false)}
+        />
+      )}
+
+      <main className="flex-1 min-w-0 w-full flex flex-col transition-all duration-300 ml-0 lg:ml-56 xl:ml-64 overflow-x-hidden">
+        <TopNav
           activePage={activePage}
+          setIsSidebarOpen={setIsSidebarOpen}
           setActivePage={setActivePage}
         />
-      </div>
-    </main>
-  </div>
-);
+
+        {/* Removed extra padding from here */}
+        <div className="w-full flex-1 overflow-x-hidden">
+          <SectionsDataRight
+            activePage={activePage}
+            setActivePage={setActivePage}
+          />
+        </div>
+      </main>
+    </div>
+  );
 }
 
 export default Dashboard;

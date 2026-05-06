@@ -69,7 +69,7 @@ function StockSection({ refetchTrigger = 0 }) {
   };
 
   return (
-    <div className="p-6 sm:p-8 min-h-screen bg-gradient-to-br from-gray-50 via-white to-teal-50/40 space-y-8">
+    <div className="p-6 sm:p-8 min-h-screen  to-teal-50/40 space-y-8">
       
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
