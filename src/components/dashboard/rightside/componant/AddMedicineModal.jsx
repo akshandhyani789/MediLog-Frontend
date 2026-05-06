@@ -242,15 +242,7 @@ function AddMedicineModal({ isOpen, onClose, scannedMedicine, openScanner, onMed
               required
               disabled={loading}
             />
-            <InputField
-              label="Max Stock (Optional)"
-              type="number"
-              value={form.maxStock}
-              onChange={(e) => setForm({ ...form, maxStock: e.target.value })}
-              placeholder="0"
-              min="0"
-              disabled={loading}
-            />
+            
           </div>
 
           <InputField
