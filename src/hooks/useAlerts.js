@@ -9,22 +9,26 @@ export function useAlerts(alertsData) {
 
   const [checkedAlerts, setCheckedAlerts] = useState([]);
 
-  const getAlertId = (alert, idx) => {
-    return alert.id || alert._id || `${alert.title}-${alert.message}-${idx}`;
-  };
-
   useEffect(() => {
     const savedAlerts = sessionStorage.getItem("checkedAlerts");
-
     if (savedAlerts) {
       setCheckedAlerts(JSON.parse(savedAlerts));
     }
   }, []);
 
+  const getAlertId = (alert, idx) => {
+    return alert.id || alert._id || `${alert.title}-${alert.message}-${idx}`;
+  };
+
   const alertsWithIds = useMemo(() => {
     return allAlerts.map((alert, idx) => ({
       ...alert,
       id: getAlertId(alert, idx),
+      severity:
+        alert.severity ||
+        alert.type ||
+        alert.status ||
+        "warning",
     }));
   }, [allAlerts]);
 
@@ -35,11 +39,15 @@ export function useAlerts(alertsData) {
   }, [alertsWithIds, checkedAlerts]);
 
   const criticalAlerts = visibleAlerts.filter(
-    (alert) => alert.severity === "critical"
+    (alert) =>
+      alert.severity === "critical" ||
+      alert.severity === "expired"
   );
 
   const warningAlerts = visibleAlerts.filter(
-    (alert) => alert.severity === "warning"
+    (alert) =>
+      alert.severity === "warning" ||
+      alert.severity === "expiring"
   );
 
   const handleCheckAlert = (alertId) => {
