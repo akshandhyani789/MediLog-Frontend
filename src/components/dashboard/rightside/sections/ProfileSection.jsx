@@ -1,26 +1,30 @@
 
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import { Settings, Camera, CheckCircle2 } from "lucide-react";
 import PersonalInfoCard from "../componant/profileComponant/PersonalInfoCard";
-
-const DEMO_PROFILE = {
-  name: "Akshan Dhyani",
-  fullName: "Akshan Dhyani",
-  email: "akshan.demo@example.com",
-  phone: "9876543210",
-  role: "individual",
-  city: "Dehradun",
-  state: "Uttarakhand",
-  searchLocation: "Clement Town, Dehradun, Uttarakhand",
-  profileImage: "",
-};
+import { useAuth } from "../../../../hooks/useAuth";
+import { updateUserProfile } from "../../../../services/api";
 
 export default function ProfileSection() {
-  const [profile, setProfile] = useState(DEMO_PROFILE);
+  const { user, userData, setUserData, userDataLoading, userDataError } =
+    useAuth();
   const [photo, setPhoto] = useState("");
   const [uploading, setUploading] = useState(false);
 
-  const initials = profile.name
+  const profile = useMemo(() => {
+    if (!userData) return null;
+    return {
+      ...userData,
+      email: userData.email ?? user?.email ?? "",
+    };
+  }, [userData, user?.email]);
+
+  const displayName =
+    profile?.role === "vendor"
+      ? profile.ownerName || profile.name || ""
+      : profile?.name || "";
+  const profileImage = photo || profile?.profileImage || user?.photoURL || "";
+  const initials = displayName
     .trim()
     .split(/\s+/)
     .slice(0, 2)
@@ -63,14 +67,31 @@ export default function ProfileSection() {
     event.target.value = "";
   };
 
-  const updateProfile = (updatedFields) => {
-    setProfile((previous) => ({
-      ...previous,
-      ...updatedFields,
-      name:
-        updatedFields.fullName !== undefined
-          ? updatedFields.fullName
-          : previous.name,
+  const updateProfile = async (updatedFields) => {
+    if (!profile) {
+      throw new Error("Your profile is not available yet. Please try again.");
+    }
+
+    const updatedUser = await updateUserProfile({
+      ...(profile.role === "vendor"
+        ? {
+            ownerName: updatedFields.fullName,
+            businessPhone: updatedFields.phone,
+          }
+        : { name: updatedFields.fullName }),
+      ...(profile.role !== "vendor" ? { phone: updatedFields.phone } : {}),
+      city: updatedFields.city,
+      state: updatedFields.state,
+      searchLocation: updatedFields.searchLocation,
+    });
+
+    if (!updatedUser || typeof updatedUser !== "object") {
+      throw new Error("The server did not return the updated profile.");
+    }
+
+    setUserData((currentData) => ({
+      ...(currentData || {}),
+      ...updatedUser,
     }));
   };
 
@@ -95,16 +116,6 @@ export default function ProfileSection() {
           </div>
         </header>
 
-        {/* Demo banner */}
-        <div className="rounded-xl border border-teal-400/15 bg-teal-400/[0.045] px-4 py-3">
-          <p className="text-sm text-gray-300">
-            <span className="font-semibold text-teal-300">
-              Demo mode
-            </span>
-            {" "}— displaying sample profile information. Changes are temporary and are not sent to the backend.
-          </p>
-        </div>
-
         {/* Profile header card */}
         <section className="surface-card relative overflow-hidden rounded-2xl shadow-[0_20px_80px_rgba(0,0,0,0.08)]">
           <div className="pointer-events-none absolute inset-y-0 left-0 w-1/2 bg-gradient-to-r from-teal-400/[0.06] to-transparent" />
@@ -112,14 +123,14 @@ export default function ProfileSection() {
           <div className="relative flex flex-col gap-5 px-5 py-6 sm:flex-row sm:items-center sm:justify-between sm:px-7">
             <div className="flex min-w-0 items-center gap-4 sm:gap-5">
               <div className="relative flex h-[68px] w-[68px] shrink-0 items-center justify-center overflow-hidden rounded-full border border-teal-400/30 bg-gradient-to-br from-teal-400/20 to-teal-900/30 text-lg font-bold text-teal-100 sm:h-[74px] sm:w-[74px]">
-                {photo ? (
+                {profileImage ? (
                   <img
-                    src={photo}
+                    src={profileImage}
                     alt="Profile"
                     className="h-full w-full object-cover"
                   />
                 ) : (
-                  initials || "U"
+                  initials
                 )}
 
                 <span className="absolute bottom-0 right-0 flex h-5 w-5 items-center justify-center rounded-full border-2 border-[#101515] bg-teal-400">
@@ -129,15 +140,19 @@ export default function ProfileSection() {
 
               <div className="min-w-0">
                 <h2 className="truncate text-xl font-semibold tracking-tight text-gray-100 sm:text-2xl">
-                  {profile.name}
+                  {userDataLoading
+                    ? "Loading profile..."
+                    : displayName || "Profile unavailable"}
                 </h2>
 
                 <p className="mt-1 break-all text-sm text-gray-400">
-                  {profile.email}
+                  {profile?.email || ""}
                 </p>
 
                 <p className="mt-2 text-xs text-gray-500">
-                  Individual account · MediLog demo
+                  {profile?.role
+                    ? `${profile.role === "vendor" ? "Vendor" : "Individual"} account · MediLog`
+                    : ""}
                 </p>
               </div>
             </div>
@@ -160,10 +175,12 @@ export default function ProfileSection() {
         <PersonalInfoCard
           profile={profile}
           onProfileChange={updateProfile}
+          loading={userDataLoading}
+          loadError={profile ? "" : userDataError}
         />
 
         <p className="pb-4 text-center text-xs text-gray-600">
-          MediLog · Profile settings · Demo presentation
+          MediLog · Profile settings
         </p>
       </div>
     </main>

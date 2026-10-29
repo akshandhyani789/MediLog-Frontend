@@ -1,15 +1,73 @@
 {
   "planHash": "a7c185264ec1dcac29dd23fb89ab25fe123557826baffa381469c58d744835ae",
   "phase": "standalone",
-  "recordedAtUtc": "2026-10-27T15:25:58.5532877Z",
+  "recordedAtUtc": "2026-10-29T08:41:09.4057770Z",
   "retryCount": 2,
   "resetBaseline": false,
   "complete": true,
   "result": {
-    "setupSucceeded": false,
-    "setupDurationMs": 2894,
-    "setupFailureOutput": "setup step 0 \u0027npm\u0027 failed (exit=-4048, timedOut=False)\r\nnpm error code EPERM\r\nnpm error syscall unlink\r\nnpm error path C:\\Users\\DELL\\OneDrive\\New folder\\Medilog2.0\\MediLog-Frontend\\node_modules\\lightningcss-win32-x64-msvc\\lightningcss.win32-x64-msvc.node\r\nnpm error errno -4048\r\nnpm error [Error: EPERM: operation not permitted, unlink \u0027C:\\Users\\DELL\\OneDrive\\New folder\\Medilog2.0\\MediLog-Frontend\\node_modules\\lightningcss-win32-x64-msvc\\lightningcss.win32-x64-msvc.node\u0027] {\r\nnpm error   errno: -4048,\r\nnpm error   code: \u0027EPERM\u0027,\r\nnpm error   syscall: \u0027unlink\u0027,\r\nnpm error   path: \u0027C:\\\\Users\\\\DELL\\\\OneDrive\\\\New folder\\\\Medilog2.0\\\\MediLog-Frontend\\\\node_modules\\\\lightningcss-win32-x64-msvc\\\\lightningcss.win32-x64-msvc.node\u0027\r\nnpm error }\r\nnpm error\r\nnpm error The operation was rejected by your operating system.\r\nnpm error It\u0027s possible that the file was already in use (by a text editor or antivirus),\r\nnpm error or that you lack permissions to access it.\r\nnpm error\r\nnpm error If you believe this might be a permissions issue, please double-check the\r\nnpm error permissions of the file and its containing directories, or try running\r\nnpm error the command again as root/Administrator.\r\nnpm error A complete log of this run can be found in: C:\\Users\\DELL\\AppData\\Local\\npm-cache\\_logs\\2026-10-27T15_25_56_393Z-debug-0.log\r\n",
-    "assertions": [],
+    "setupSucceeded": true,
+    "setupDurationMs": 106626,
+    "setupFailureOutput": null,
+    "assertions": [
+      {
+        "name": "frontend-build",
+        "kind": "process",
+        "verificationMethod": "exit-code",
+        "passed": true,
+        "timedOut": false,
+        "skipped": false,
+        "skippedReason": null,
+        "exitCode": 0,
+        "outputSample": "\r\n\u003E client@0.0.0 build\r\n\u003E vite build\r\n\r\n\r\n\u2554\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2557\r\n\u2551  \uD83D\uDE80 MediLog Dev Server Started       \u2551\r\n\u2560\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2563\r\n\u2551  Local:    http://localhost:5173        \u2551\r\n\u2551  Network:  http://192.168.31.183:5173       \u2551\r\n\u2551                                        \u2551\r\n\u2551  \uD83D\uDCF1 Use Network URL on mobile device  \u2551\r\n\u255A\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u255D\r\n\r\n\u001B[36mvite v7.3.1 \u001B[32mbuilding client environment for production...\u001B[36m\u001B[39m\r\ntransforming...\r\n\u001B[32m\u2713\u001B[39m 2490 modules transformed.\r\nrendering chunks...\r\ncomputing gzip size...\r\n\u001B[2mdist/\u001B[22m\u001B[32mindex.html                 \u001B[39m\u001B[1m\u001B[2m    0.74 kB\u001B[22m\u001B[1m\u001B[22m\u001B[2m \u2502 gzip:   0.48 kB\u001B[22m\r\n\u001B[2mdist/\u001B[22m\u001B[35massets/index-DpzvUiCM.css  \u001B[39m\u001B[1m\u001B[2m  120.03 kB\u001B[22m\u001B[1m\u001B[22m\u001B[2m \u2502 gzip:  17.97 kB\u001B[22m\r\n\u001B[2mdist/\u001B[22m\u001B[36massets/index-DMQ5mgkb.js   \u001B[39m\u001B[1m\u001B[33m1,252.91 kB\u001B[39m\u001B[22m\u001B[2m \u2502 gzip: 370.43 kB\u001B[22m\r\n\u001B[33m\r\n(!) Some chunks are larger than 500 kB after minification. Consider:\r\n- Using dynamic import() to code-split the application\r\n- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks\r\n- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.\u001B[39m\r\n\u001B[32m\u2713 built in 17.64s\u001B[39m\r\n",
+        "durationMs": 20199
+      },
+      {
+        "name": "tests-pass",
+        "kind": "process",
+        "verificationMethod": "test-results",
+        "passed": false,
+        "timedOut": false,
+        "skipped": false,
+        "skippedReason": null,
+        "exitCode": 1,
+        "outputSample": "\r\n\u003E client@0.0.0 test\r\n\u003E vitest run\r\n\r\n\r\n\u2554\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2557\r\n\u2551  \uD83D\uDE80 MediLog Dev Server Started       \u2551\r\n\u2560\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2563\r\n\u2551  Local:    http://localhost:5173        \u2551\r\n\u2551  Network:  http://192.168.31.183:5173       \u2551\r\n\u2551                                        \u2551\r\n\u2551  \uD83D\uDCF1 Use Network URL on mobile device  \u2551\r\n\u255A\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u255D\r\n\r\n\r\n RUN  v5.0.5 C:/Users/DELL/OneDrive/New folder/Medilog2.0/MediLog-Frontend\r\n\r\n \u276F tests/theme.spec.js (0 test)\r\n\r\n\u23AF\u23AF\u23AF\u23AF\u23AF\u23AF Failed Suites 1 \u23AF\u23AF\u23AF\u23AF\u23AF\u23AF\u23AF\r\n\r\n FAIL  tests/theme.spec.js [ tests/theme.spec.js ]\r\nTypeError: Cannot read properties of undefined (reading \u0027config\u0027)\r\n \u276F tests/theme.spec.js:9:9\r\n      7| );\r\n      8|\r\n      9| describe(\u0022light-only theme\u0022, () =\u003E {\r\n       |         ^\r\n     10|   it(\u0022defines the required brand palette and gradients\u0022, () =\u003E {\r\n     11|     for (const token of [\r\n\r\n\u23AF\u23AF\u23AF\u23AF\u23AF\u23AF\u23AF\u23AF\u23AF\u23AF\u23AF\u23AF\u23AF\u23AF\u23AF\u23AF\u23AF\u23AF\u23AF\u23AF\u23AF\u23AF\u23AF\u23AF[1/1]\u23AF\r\n\r\n\r\n Test Files  1 failed (1)\r\n      Tests  no tests\r\n   Start at  14:10:56\r\n   Duration  491ms (worker 97%, environment 3%)\r\n\r\n",
+        "durationMs": 4907,
+        "testResults": {
+          "testFramework": "vitest",
+          "runnerDetectedFrom": "package_json",
+          "testsTotal": 0,
+          "testsPassed": 0,
+          "testsFailed": 0,
+          "testsSkipped": 0,
+          "parseFailed": true
+        }
+      },
+      {
+        "name": "frontend-lint",
+        "kind": "process",
+        "verificationMethod": "exit-code",
+        "passed": false,
+        "timedOut": false,
+        "skipped": false,
+        "skippedReason": null,
+        "exitCode": 1,
+        "outputSample": "\r\n\u003E client@0.0.0 lint\r\n\u003E eslint .\r\n\r\n\r\nc:\\Users\\DELL\\OneDrive\\New folder\\Medilog2.0\\MediLog-Frontend\\src\\components\\Flowcard.jsx\r\n  3:28  error  \u0027Icon\u0027 is defined but never used  no-unused-vars\r\n\r\nc:\\Users\\DELL\\OneDrive\\New folder\\Medilog2.0\\MediLog-Frontend\\src\\components\\IconCard.jsx\r\n  1:21  error  \u0027Icon\u0027 is defined but never used  no-unused-vars\r\n\r\nc:\\Users\\DELL\\OneDrive\\New folder\\Medilog2.0\\MediLog-Frontend\\src\\components\\dashboard\\rightside\\componant\\AddMedicineModal.jsx\r\n  69:6  warning  React Hook useEffect has a missing dependency: \u0027initialForm\u0027. Either include it or remove the dependency array  react-hooks/exhaustive-deps\r\n\r\nc:\\Users\\DELL\\OneDrive\\New folder\\Medilog2.0\\MediLog-Frontend\\src\\components\\dashboard\\rightside\\componant\\InfoBadge.jsx\r\n  2:3  error  \u0027Icon\u0027 is defined but never used  no-unused-vars\r\n\r\nc:\\Users\\DELL\\OneDrive\\New folder\\Medilog2.0\\MediLog-Frontend\\src\\components\\dashboard\\rightside\\componant\\OCRScanner.jsx\r\n  316:6  warning  React Hook useEffect has a missing dependency: \u0027startAutoScan\u0027. Either include it or remove the dependency array  react-hooks/exhaustive-deps\r\n\r\nc:\\Users\\DELL\\OneDrive\\New folder\\Medilog2.0\\MediLog-Frontend\\src\\components\\dashboard\\rightside\\componant\\Scanner.jsx\r\n   4:10  error  \u0027stopCameraStream\u0027 is defined but never used. Allowed unused vars must match /^[A-Z_]/u       no-unused-vars\r\n  15:10  error  \u0027scannerReady\u0027 is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u  no-unused-vars\r\n  61:16  error  \u0027err\u0027 is defined but never used                                                               no-unused-vars\r\n\r\nc:\\Users\\DELL\\OneDrive\\New folder\\Medilog2.0\\MediLog-Frontend\\src\\components\\dashboard\\rightside\\componant\\profileComponant\\NotificationCard.jsx\r\n   8:3   error  \u0027updateNotificationSettings\u0027 is defined but never used. Allowed unused vars must match /^[A-Z_]/u  no-unused-vars\r\n  13:10  error  \u0027use\u0027 is defined but never used. Allowed unused vars must match /^[A-Z_]/u                         no-unused-vars\r\n\r\nc:\\Users\\DELL\\OneDrive\\New folder\\Medilog2.0\\MediLog-Frontend\\src\\components\\dashboard\\rightside\\componant\\profileComponant\\PersonalInfoCard.jsx\r\n   31:5   error  Error: Calling setState synchronously within an effect can trigger cascading renders\r\n\r\nEffects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:\r\n* Update external systems with the latest state from React.\r\n* Subscribe for updates from some external system, calling setState in a callback function when external state changes.\r\n\r\nCalling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).\r\n\r\n  29 |\r\n  30 |   useEffect(() =\u003E {\r\n\u003E 31 |     setDraft(profile || DEMO_PROFILE);\r\n     |     ^^^^^^^^ Avoid calling setState() directly within an effect\r\n  32 |   }, [profile]);\r\n  33 |\r\n  34 |   const handleChange = (field, value) =\u003E {                                                                                                                                                                                                                                                                                     react-hooks/set-state-in-effect\r\n  138:12  error  Error: Cannot create components during render\r\n\r\nComponents created during render will reset their state each time they are created. Declare components outside of render.\r\n\r\n  136 |         \u003Cdiv className=\u0022grid grid-cols-1 gap-x-5 gap-y-5 md:grid-cols-2 md:gap-x-6 md:gap-y-6\u0022\u003E\r\n  137 |\r\n\u003E 138 |           \u003CField label=\u0022Full name\u0022 field=\u0022fullName\u0022 /\u003E\r\n      |            ^^^^^ This component is created during render\r\n  139 |\r\n  140 |           \u003CField\r\n  141 |             label=\u0022Email address\u0022\r\n\r\n   88 |   };\r\n   89 |\r\n\u003E  90 |   const Field = ({ label, field, disabled = false }) =\u003E (\r\n      |                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n\u2026[truncated]",
+        "durationMs": 10503
+      },
+      {
+        "name": "homepage-responds",
+        "kind": "http-probe",
+        "verificationMethod": "http-status",
+        "passed": true,
+        "timedOut": false,
+        "skipped": false,
+        "skippedReason": null,
+        "exitCode": null,
+        "outputSample": "HTTP 200\n\u003C!doctype html\u003E\r\n\u003Chtml lang=\u0022en\u0022\u003E\r\n  \u003Chead\u003E\n    \u003Cscript type=\u0022module\u0022\u003Eimport { injectIntoGlobalHook } from \u0022/@react-refresh\u0022;\ninjectIntoGlobalHook(window);\nwindow.$RefreshReg$ = () =\u003E {};\nwindow.$RefreshSig$ = () =\u003E (type) =\u003E type;\u003C/script\u003E\n\n    \u003Cscript type=\u0022module\u0022 src=\u0022/@vite/client\u0022\u003E\u003C/script\u003E\n\r\n    \u003Cmeta charset=\u0022UTF-8\u0022 /\u003E\r\n    \u003Clink rel=\u0022icon\u0022 type=\u0022image/svg\u002Bxml\u0022 href=\u0022/vite.svg\u0022 /\u003E\r\n    \u003Cmeta name=\u0022viewport\u0022 content=\u0022width=device-width, initial-scale=1.0\u0022 /\u003E\r\n    \u003Clink rel=\u0022stylesheet\u0022 href=\u0022https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css\u0022 integrity=\u0022sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc\u002BIYdlYdEErWNu69gVcYgdxlmVmzTWnetw==\u0022 crossorigin=\u0022anonymous\u0022 referrerpolicy=\u0022no-referrer\u0022 /\u003E\r\n    \u003Ctitle\u003EMediLog\u003C/title\u003E\r\n  \u003C/head\u003E\r\n  \u003Cbody\u003E\r\n    \u003Cdiv id=\u0022root\u0022\u003E\u003C/div\u003E\r\n    \u003Cscript type=\u0022module\u0022 src=\u0022/src/main.jsx\u0022\u003E\u003C/script\u003E\r\n  \u003C/body\u003E\r\n\u003C/html\u003E\r\n\n--- server output ---\n\r\n\u2554\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2557\r\n\u2551  \uD83D\uDE80 MediLog Dev Server Started       \u2551\r\n\u2560\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2563\r\n\u2551  Local:    http://localhost:5173        \u2551\r\n\u2551  Network:  http://192.168.31.183:5173       \u2551\r\n\u2551                                        \u2551\r\n\u2551  \uD83D\uDCF1 Use Network URL on mobile device  \u2551\r\n\u255A\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u255D\r\n\r\n\r\n  \u001B[32m\u001B[1mVITE\u001B[22m v7.3.1\u001B[39m  \u001B[2mready in \u001B[0m\u001B[1m1003\u001B[22m\u001B[2m\u001B[0m ms\u001B[22m\r\n\r\n  \u001B[32m\u279C\u001B[39m  \u001B[1mLocal\u001B[22m:   \u001B[36mhttp://127.0.0.1:\u001B[1m5173\u001B[22m/\u001B[39m\r\n",
+        "durationMs": 1676
+      }
+    ],
     "executions": [
       {
         "source": "setup[0]",
@@ -17,7 +75,54 @@
         "args": [
           "ci"
         ],
-        "cwd": "C:\\Users\\DELL\\OneDrive\\New folder\\Medilog2.0\\MediLog-Frontend",
+        "cwd": "c:\\Users\\DELL\\OneDrive\\New folder\\Medilog2.0\\MediLog-Frontend",
+        "env": {},
+        "prependPath": [],
+        "platform": "win32"
+      },
+      {
+        "source": "frontend-build",
+        "resolvedExecutable": "C:\\Program Files\\nodejs\\npm.CMD",
+        "args": [
+          "run",
+          "build"
+        ],
+        "cwd": "c:\\Users\\DELL\\OneDrive\\New folder\\Medilog2.0\\MediLog-Frontend",
+        "env": {},
+        "prependPath": [],
+        "platform": "win32"
+      },
+      {
+        "source": "tests-pass",
+        "resolvedExecutable": "C:\\Program Files\\nodejs\\npm.CMD",
+        "args": [
+          "test"
+        ],
+        "cwd": "c:\\Users\\DELL\\OneDrive\\New folder\\Medilog2.0\\MediLog-Frontend",
+        "env": {},
+        "prependPath": [],
+        "platform": "win32"
+      },
+      {
+        "source": "frontend-lint",
+        "resolvedExecutable": "C:\\Program Files\\nodejs\\npm.CMD",
+        "args": [
+          "run",
+          "lint"
+        ],
+        "cwd": "c:\\Users\\DELL\\OneDrive\\New folder\\Medilog2.0\\MediLog-Frontend",
+        "env": {},
+        "prependPath": [],
+        "platform": "win32"
+      },
+      {
+        "source": "homepage-responds",
+        "resolvedExecutable": "C:\\Program Files\\nodejs\\node.EXE",
+        "args": [
+          "node_modules/vite/bin/vite.js",
+          "--host=127.0.0.1"
+        ],
+        "cwd": "c:\\Users\\DELL\\OneDrive\\New folder\\Medilog2.0\\MediLog-Frontend",
         "env": {},
         "prependPath": [],
         "platform": "win32"

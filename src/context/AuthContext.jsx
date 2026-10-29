@@ -9,6 +9,8 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [userData, setUserData] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [userDataLoading, setUserDataLoading] = useState(true);
+  const [userDataError, setUserDataError] = useState("");
 
   useEffect(() => {
     let active = true;
@@ -22,6 +24,8 @@ export const AuthProvider = ({ children }) => {
 
       setUser(currentUser);
       setUserData(null);
+      setUserDataError("");
+      setUserDataLoading(Boolean(currentUser));
       setLoading(false);
 
       if (!currentUser) return;
@@ -32,6 +36,7 @@ export const AuthProvider = ({ children }) => {
 
           if (!backendRes) {
             console.error("Backend connection failed. Check if server is running.");
+            setUserDataError("Unable to load your profile. Check your connection and try again.");
             return;
           }
 
@@ -40,6 +45,14 @@ export const AuthProvider = ({ children }) => {
         .catch((error) => {
           if (active && eventId === authEventId) {
             console.error("Auth backend sync failed:", error);
+            setUserDataError(
+              error?.message || "Unable to load your profile. Please try again.",
+            );
+          }
+        })
+        .finally(() => {
+          if (active && eventId === authEventId) {
+            setUserDataLoading(false);
           }
         });
     };
@@ -51,6 +64,8 @@ export const AuthProvider = ({ children }) => {
       authEventId += 1;
       setUser(null);
       setUserData(null);
+      setUserDataLoading(false);
+      setUserDataError(error?.message || "Unable to verify your account.");
       setLoading(false);
     };
 
@@ -73,6 +88,8 @@ export const AuthProvider = ({ children }) => {
         userData,
         setUserData,
         loading,
+        userDataLoading,
+        userDataError,
       }}
     >
       {children}

@@ -1,16 +1,32 @@
+import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import MedilogLoader from "../MedilogLoader";
 
 function Join() {
   const navigate = useNavigate();
+  const [isLoading, setIsLoading] = useState(false);
+  const isNavigating = useRef(false);
+  const navigationTimer = useRef(null);
 
-  const handleJoin = (route) => navigate(route);
+  useEffect(() => {
+    return () => {
+      window.clearTimeout(navigationTimer.current);
+    };
+  }, []);
 
   const handleNewJoin = () => {
-    handleJoin("/signup");
+    navigate("/signup");
   };
 
   const handleLogin = () => {
-    handleJoin("/login");
+    if (isNavigating.current) return;
+
+    isNavigating.current = true;
+    setIsLoading(true);
+    navigationTimer.current = window.setTimeout(() => {
+      navigationTimer.current = null;
+      navigate("/login");
+    }, 1500);
   };
 
   return (
@@ -48,6 +64,7 @@ function Join() {
               <button
                 type="button"
                 onClick={handleLogin}
+                disabled={isLoading}
                 className="mt-4 px-8 py-3 bg-white/15 border border-white/30 text-white rounded-xl font-semibold text-lg hover:bg-white/25 transition-all duration-200 shadow-lg"
               >
                 Already have an account? Log in
@@ -56,6 +73,7 @@ function Join() {
           </div>
         </div>
       </section>
+      {isLoading && <MedilogLoader />}
     </>
   );
 }
