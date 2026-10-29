@@ -8,40 +8,62 @@ export const AuthContext = createContext();
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [userData, setUserData] = useState(null);
-  const [isOnboarded, setIsOnboarded] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
-      try {
-        if (currentUser) {
-        
-          const backendRes = await sendUserToBackend(currentUser);
+    let active = true;
+    let authEventId = 0;
+    let unsubscribe;
+
+    const handleAuthState = (currentUser) => {
+      if (!active) return;
+
+      const eventId = ++authEventId;
+
+      setUser(currentUser);
+      setUserData(null);
+      setLoading(false);
+
+      if (!currentUser) return;
+
+      void sendUserToBackend(currentUser)
+        .then((backendRes) => {
+          if (!active || eventId !== authEventId) return;
 
           if (!backendRes) {
             console.error("Backend connection failed. Check if server is running.");
-            setUser(currentUser);
-            setUserData(null);
-            setIsOnboarded(null);
             return;
           }
 
-          setUser(currentUser);
-          setUserData(backendRes.user);
-          setIsOnboarded(backendRes.user?.isOnboarded ?? false);
-        } else {
-          setUser(null);
-          setUserData(null);
-          setIsOnboarded(null);
-        }
-      } catch (error) {
-        console.error("Auth context error:", error);
-      } finally {
-        setLoading(false);
-      }
-    });
+          setUserData((currentData) => currentData ?? backendRes.user ?? null);
+        })
+        .catch((error) => {
+          if (active && eventId === authEventId) {
+            console.error("Auth backend sync failed:", error);
+          }
+        });
+    };
 
-    return () => unsubscribe();
+    const handleAuthError = (error) => {
+      if (!active) return;
+
+      console.error("Firebase auth state error:", error);
+      authEventId += 1;
+      setUser(null);
+      setUserData(null);
+      setLoading(false);
+    };
+
+    try {
+      unsubscribe = onAuthStateChanged(auth, handleAuthState, handleAuthError);
+    } catch (error) {
+      handleAuthError(error);
+    }
+
+    return () => {
+      active = false;
+      unsubscribe?.();
+    };
   }, []);
 
   return (
@@ -50,8 +72,6 @@ export const AuthProvider = ({ children }) => {
         user,
         userData,
         setUserData,
-        isOnboarded,
-        setIsOnboarded,
         loading,
       }}
     >

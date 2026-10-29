@@ -1,11 +1,24 @@
+
 import React, { useMemo } from "react";
-import { PieChart, Pie, Cell, ResponsiveContainer } from "recharts";
+import {
+  PieChart,
+  Pie,
+  Cell,
+  ResponsiveContainer,
+  Tooltip,
+} from "recharts";
 import { TrendingUp } from "lucide-react";
 
-const COLORS = ["#0F766E", "#3B82F6", "#8B5CF6", "#14B8A6", "#06B6D4", "#6366F1"];
+const COLORS = [
+  "#0F857B",
+  "#1D4ED8",
+  "#15803D",
+  "#12B8A6",
+  "#15803D",
+  "#0EA5A4",
+];
 
 const CompositionChart = ({ medicines = [] }) => {
-
   const data = useMemo(() => {
     const map = {};
 
@@ -22,76 +35,118 @@ const CompositionChart = ({ medicines = [] }) => {
   }, [medicines]);
 
   return (
-    <div className="bg-white rounded-3xl p-6 sm:p-8 border border-gray-200 hover:border-gray-300 shadow-sm transition-all duration-300 flex flex-col">
+    <div
+      className="relative flex h-full flex-col overflow-hidden rounded-3xl
+        border border-white/[0.09] bg-white/[0.035]
+        p-6 shadow-[0_8px_32px_rgba(0,0,0,0.15)]
+        backdrop-blur-2xl transition-all duration-300
+        hover:border-[#00C2C7]/25 sm:p-8"
+    >
+      {/* Ambient teal glow */}
+      <div className="pointer-events-none absolute -right-16 -top-16 h-40 w-40 rounded-full bg-[#00C2C7]/[0.06] blur-3xl" />
 
       {/* Header */}
-      <div className="mb-6">
-        <div className="flex items-center gap-2 mb-1">
-          <TrendingUp className="w-5 h-5 text-teal-600" />
-          <h2 className="text-lg sm:text-xl font-bold text-gray-900 tracking-tight">
+      <div className="relative mb-6">
+        <div className="mb-1 flex items-center gap-2">
+          <div className="rounded-lg border border-[#00C2C7]/20 bg-[#00C2C7]/[0.08] p-2">
+            <TrendingUp className="h-5 w-5 text-[#00C2C7]" />
+          </div>
+
+          <h2 className="text-lg font-bold tracking-tight text-gray-100 sm:text-xl">
             Medicine Composition
           </h2>
         </div>
-        <p className="text-sm text-gray-500 font-medium">
+
+        <p className="ml-1 mt-2 text-sm font-medium text-gray-400">
           Breakdown by category
         </p>
       </div>
 
-      {/* MAIN LAYOUT */}
-      <div className="flex flex-col items-center gap-8 flex-1">
-
-        {/* 📊 CHART */}
-        <div className="relative w-full sm:w-3/4 h-[220px]">
+      {/* Chart and legend */}
+      <div className="relative flex flex-1 flex-col items-center gap-8">
+        {/* Pie chart */}
+        <div className="relative h-[220px] w-full sm:w-3/4">
           <ResponsiveContainer width="100%" height="100%">
             <PieChart>
               <Pie
                 data={data}
                 dataKey="value"
-                innerRadius={50}
-                outerRadius={75}
-                paddingAngle={2}
+                nameKey="name"
+                innerRadius={55}
+                outerRadius={80}
+                paddingAngle={3}
+                stroke="rgba(255,255,255,0.95)"
+                strokeWidth={3}
               >
                 {data.map((entry, index) => (
-                  <Cell key={index} fill={entry.color} />
+                  <Cell key={`${entry.name}-${index}`} fill={entry.color} />
                 ))}
               </Pie>
+
+              <Tooltip
+                contentStyle={{
+                  backgroundColor: "#FFFFFF",
+                  border: "1px solid #E2E8F0",
+                  borderRadius: "12px",
+                  color: "#0F172A",
+                  boxShadow: "0 8px 24px rgba(15,23,42,0.12)",
+                }}
+                itemStyle={{ color: "#0F766E" }}
+                labelStyle={{ color: "#0F172A" }}
+              />
             </PieChart>
           </ResponsiveContainer>
 
-          {/* CENTER TEXT */}
-          <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-            <span className="text-xs text-gray-400 font-semibold">TYPES</span>
-            <span className="text-3xl font-bold text-gray-900">
+          {/* Center text */}
+          <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center">
+            <span className="text-xs font-semibold tracking-[0.15em] text-gray-500">
+              TYPES
+            </span>
+            <span className="mt-1 text-3xl font-bold text-gray-100">
               {data.length}
             </span>
           </div>
         </div>
 
-        {/* 📋 LEGEND */}
-        <div className="w-full grid grid-cols-2 sm:grid-cols-3 gap-3">
-          {data.map((item, index) => (
-            <div
-              key={index}
-              className="flex items-center gap-2 p-2.5 rounded-lg bg-gray-50 border border-gray-200 hover:border-gray-300 transition-all duration-300 group"
-            >
-              {/* Color Dot */}
-              <div className="flex items-center gap-2 min-w-0 flex-1">
-                <span
-                  className="w-2.5 h-2.5 rounded-full flex-shrink-0 shadow-sm"
-                  style={{ background: item.color }}
-                />
-                <span className="text-xs text-gray-700 font-medium truncate">
-                  {item.name}
+        {/* Empty chart message */}
+        {data.length === 0 && (
+          <p className="-mt-5 text-center text-sm text-gray-500">
+            Add medicines to see your category breakdown.
+          </p>
+        )}
+
+        {/* Legend */}
+        {data.length > 0 && (
+          <div className="grid w-full grid-cols-2 gap-3 sm:grid-cols-3">
+            {data.map((item, index) => (
+              <div
+                key={`${item.name}-${index}`}
+                className="group flex min-w-0 items-center gap-2 rounded-xl
+                  border border-white/[0.06] bg-white/[0.025] p-2.5
+                  transition-all duration-300
+                  hover:border-[#00C2C7]/20 hover:bg-white/[0.045]"
+              >
+                <div className="flex min-w-0 flex-1 items-center gap-2">
+                  <span
+                    className="h-2.5 w-2.5 shrink-0 rounded-full"
+                    style={{
+                      backgroundColor: item.color,
+                      boxShadow: `0 0 8px ${item.color}40`,
+                    }}
+                  />
+
+                  <span className="truncate text-xs font-medium text-gray-400 transition-colors group-hover:text-gray-200">
+                    {item.name}
+                  </span>
+                </div>
+
+                <span className="shrink-0 text-sm font-bold text-gray-100">
+                  {item.value}
                 </span>
               </div>
-
-              {/* Count */}
-              <span className="font-bold text-gray-900 text-sm flex-shrink-0">
-                {item.value}
-              </span>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );

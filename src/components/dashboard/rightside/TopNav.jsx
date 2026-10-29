@@ -13,17 +13,22 @@ function TopNav({ activePage, setIsSidebarOpen, setActivePage }) {
   const { user, userData } = useAuth();
   const alertsData = useAlertsData(user);
 
-  const {
-    alertCounts,
-  } = useAlerts(alertsData);
+  const { alertCounts } = useAlerts(alertsData);
 
   const profileImage = userData?.profileImage || user?.photoURL || "";
-  const UserName = userData?.name || "User";
+  const userName =
+    userData?.name ||
+    userData?.fullName ||
+    user?.displayName ||
+    "User";
 
   const [time, setTime] = useState(new Date());
 
   useEffect(() => {
-    const timer = setInterval(() => setTime(new Date()), 1000);
+    const timer = setInterval(() => {
+      setTime(new Date());
+    }, 1000);
+
     return () => clearInterval(timer);
   }, []);
 
@@ -31,96 +36,116 @@ function TopNav({ activePage, setIsSidebarOpen, setActivePage }) {
     setActivePage(page);
   };
 
-  const Hours = time.getHours().toString().padStart(2, "0");
-  const Minutes = time.getMinutes().toString().padStart(2, "0");
-  const Seconds = time.getSeconds().toString().padStart(2, "0");
+  const hours = time.getHours().toString().padStart(2, "0");
+  const minutes = time.getMinutes().toString().padStart(2, "0");
+  const seconds = time.getSeconds().toString().padStart(2, "0");
 
-  const Day = time.toLocaleString("default", { weekday: "short" });
+  const day = time.toLocaleString("default", { weekday: "short" });
   const date = time.getDate();
-  const Month = time.toLocaleString("default", { month: "short" });
+  const month = time.toLocaleString("default", { month: "short" });
 
   return (
-    <nav className="sticky top-0 z-40 h-16 flex items-center justify-between px-4 sm:px-8 border-b border-white/40 backdrop-blur-xl bg-gradient-to-r from-slate-50/95 via-teal-50/90 to-slate-100/95 shadow-sm ">
-      <div className="absolute inset-0 opacity-40 pointer-events-none overflow-hidden">
-        <div className="absolute top-[-100px] left-[-100px] w-[300px] h-[300px] bg-teal-300 blur-[120px] rounded-full" />
-        <div className="absolute bottom-[-120px] right-[-120px] w-[350px] h-[350px] bg-blue-300 blur-[140px] rounded-full" />
-      </div>
-      {/* LEFT SIDE */}
-      <div className="flex items-center gap-4">
-        
-        {/* MOBILE MENU */}
-        <button
-          onClick={() => setIsSidebarOpen((prev) => !prev)}
-          className="lg:hidden p-2 rounded-xl hover:bg-white/50 transition-all duration-200"
-        >
-          <Menu className="w-5 h-5 text-gray-700" />
-        </button>
-
-        {/* PAGE BADGE */}
-        <div className="px-4 py-1.5 rounded-xl bg-white/70 backdrop-blur-md text-teal-700 font-semibold text-sm hidden sm:block border border-white shadow-sm">
-          {activePage}
-        </div>
-
-        {/* CLOCK */}
-        <div className="hidden sm:flex gap-1 text-sm text-gray-700 font-semibold">
-          {Hours}:{Minutes}
-          <span className="text-gray-400">:{Seconds}</span>
-        </div>
-
-        {/* DATE */}
-        <div className="hidden lg:block text-sm text-gray-500 font-medium">
-          {Day}, {date} {Month}
-        </div>
+    <nav className="dashboard-nav sticky top-0 z-40 h-16 w-full shrink-0 border-b border-slate-200 bg-white/95 px-4 backdrop-blur-xl sm:px-7 lg:px-8">
+      {/* Subtle background glow */}
+      <div className="pointer-events-none absolute inset-0 overflow-hidden">
+        <div className="absolute -top-20 right-[20%] h-40 w-64 rounded-full bg-teal-500/[0.04] blur-[90px]" />
       </div>
 
-      {/* RIGHT SIDE */}
-      <div className="flex items-center gap-3">
-        
-        {/* ALERT BUTTON */}
-        <button
-          onClick={() => handleClick("Alerts")}
-          className="relative flex items-center gap-2 px-3 py-2 rounded-xl bg-white/60 hover:bg-white/80 border border-white shadow-sm transition-all duration-200"
-        >
-          <div className="relative">
-            <Bell className="w-5 h-5 text-gray-700" />
+      <div className="relative flex h-full items-center justify-between gap-4">
+        {/* LEFT SIDE */}
+        <div className="flex min-w-0 items-center gap-3 sm:gap-5">
+          {/* Mobile menu */}
+          <button
+            type="button"
+            onClick={() => setIsSidebarOpen((prev) => !prev)}
+            aria-label="Toggle sidebar"
+            className="rounded-lg p-2 text-slate-600 transition-colors hover:bg-teal-50 hover:text-[#0F857B] lg:hidden"
+          >
+            <Menu className="h-5 w-5" />
+          </button>
 
-            {alertCounts.active > 0 && (
-              <span className="absolute -top-1 -right-1 flex items-center justify-center min-w-[18px] h-[18px] px-1 text-[10px] font-bold text-white bg-red-500 rounded-full animate-pulse">
-                {alertCounts.active > 9 ? "9+" : alertCounts.active}
-              </span>
-            )}
+          {/* Breadcrumb and page title */}
+          <div className="min-w-0">
+            <div className="mb-0.5 hidden items-center gap-2 text-[11px] font-medium text-gray-500 sm:flex">
+              <span>Dashboard</span>
+              <span className="text-slate-400">/</span>
+              <span className="text-slate-600">{activePage || "Overview"}</span>
+            </div>
+
+            <h1 className="truncate text-base font-semibold tracking-tight text-[#172B3A] sm:text-lg">
+              {activePage || "Dashboard"}
+            </h1>
           </div>
 
-          <span className="hidden sm:inline text-gray-700 font-medium">
-            Alerts
-          </span>
-        </button>
+          {/* Clock and date */}
+          <div className="ml-1 hidden items-center gap-3 border-l border-slate-200 pl-4 xl:flex">
+            <span className="font-mono text-xs font-medium text-slate-700">
+              {hours}:{minutes}
+              <span className="text-slate-500">:{seconds}</span>
+            </span>
 
-        {/* PROFILE BUTTON */}
-        <button
-          onClick={() => handleClick("Profile")}
-          className="flex items-center gap-2.5 px-3 py-1.5 rounded-full bg-white/70 hover:bg-white border border-white shadow-sm transition-all duration-200"
-        >
-          <div className="w-8 h-8 rounded-full overflow-hidden bg-gradient-to-br from-teal-500 to-teal-600 flex items-center justify-center shadow-sm">
-            {profileImage ? (
-              <img
-                src={profileImage}
-                alt="Profile"
-                className="w-full h-full object-cover"
-              />
-            ) : (
-              <span className="text-white text-sm font-bold">
-                {UserName.charAt(0).toUpperCase()}
-              </span>
-            )}
+            <span className="text-xs text-slate-500">
+              {day}, {date} {month}
+            </span>
           </div>
+        </div>
 
-          <span className="hidden sm:block text-sm font-semibold text-gray-700 max-w-[110px] truncate">
-            {UserName}
-          </span>
+        {/* RIGHT SIDE */}
+        <div className="flex shrink-0 items-center gap-2 sm:gap-3">
+          {/* Search bar - visual UI */}
+          
+          {/* Alerts button */}
+          <button
+            type="button"
+            onClick={() => handleClick("Alerts")}
+            aria-label={`Open alerts. ${alertCounts?.active || 0} active alerts`}
+            className="relative flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-600 transition-all hover:border-teal-200 hover:bg-teal-50 hover:text-teal-800"
+          >
+            <Bell className="h-5 w-5" />
 
-          <ChevronDown className="w-4 h-4 text-gray-500 hidden sm:block" />
-        </button>
+            {alertCounts?.active > 0 && (
+              <>
+                <span className="absolute right-2 top-2 h-2 w-2 rounded-full bg-teal-600 ring-2 ring-white" />
+                <span className="sr-only">
+                  {alertCounts.active} active alerts
+                </span>
+              </>
+            )}
+          </button>
+
+          {/* Add Medicine button */}
+         
+
+          {/* Profile button */}
+          <button
+            type="button"
+            onClick={() => handleClick("Profile")}
+            aria-label="Open profile"
+            className="group flex h-11 shrink-0 items-center gap-2 rounded-xl px-1.5 transition-colors hover:bg-white/[0.05] sm:pl-1.5 sm:pr-0"
+          >
+            <div className="flex h-9 w-9 items-center justify-center overflow-hidden rounded-full border border-teal-400/30 bg-teal-500/[0.12]">
+              {profileImage ? (
+                <img
+                  src={profileImage}
+                  alt="Profile"
+                  className="h-full w-full object-cover"
+                />
+              ) : (
+                <span className="text-xs font-semibold tracking-wide text-teal-200">
+                  {userName
+                    .split(" ")
+                    .filter(Boolean)
+                    .map((part) => part[0])
+                    .join("")
+                    .slice(0, 2)
+                    .toUpperCase()}
+                </span>
+              )}
+            </div>
+
+            <ChevronDown className="hidden h-4 w-4 text-slate-500 transition-colors group-hover:text-[#0F857B] sm:block" />
+          </button>
+        </div>
       </div>
     </nav>
   );

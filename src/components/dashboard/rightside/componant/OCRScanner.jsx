@@ -316,7 +316,7 @@ function OCRScanner({ onClose, onResult }) {
   }, [mode]);
 
   return (
-    <div className="fixed inset-0 bg-black z-50 flex flex-col items-center justify-center p-4">
+    <div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-gradient-to-br from-[#F0FDFA] via-[#F8FAFB] to-[#ECFDF5] p-4 text-slate-900">
       {/* ❌ Close Button */}
       <button
         onClick={() => {
@@ -324,7 +324,7 @@ function OCRScanner({ onClose, onResult }) {
           stopAll();
           onClose();
         }}
-        className="absolute top-4 right-4 bg-white text-black px-4 py-2 rounded-lg font-medium hover:bg-gray-100 transition-all min-h-[44px] min-w-[44px] flex items-center justify-center z-10"
+        className="absolute right-4 top-4 z-10 flex min-h-[44px] min-w-[44px] items-center justify-center rounded-lg border border-slate-200 bg-white px-4 py-2 font-medium text-slate-800 shadow-sm transition-all hover:bg-teal-50"
         title="Close scanner"
       >
         ✕
@@ -336,8 +336,8 @@ function OCRScanner({ onClose, onResult }) {
           onClick={() => handleModeSwitch("camera")}
           className={`px-4 py-2 rounded-lg font-medium transition-all min-h-[44px] ${
             mode === "camera"
-              ? "bg-blue-500 text-white"
-              : "bg-gray-600 text-white hover:bg-gray-700"
+              ? "bg-gradient-to-r from-teal-700 to-teal-500 text-white"
+              : "border border-slate-200 bg-white text-slate-700 hover:bg-teal-50"
           }`}
           title="Switch to camera mode"
         >
@@ -348,8 +348,8 @@ function OCRScanner({ onClose, onResult }) {
           onClick={() => handleModeSwitch("upload")}
           className={`px-4 py-2 rounded-lg font-medium transition-all min-h-[44px] ${
             mode === "upload"
-              ? "bg-blue-500 text-white"
-              : "bg-gray-600 text-white hover:bg-gray-700"
+              ? "bg-gradient-to-r from-teal-700 to-teal-500 text-white"
+              : "border border-slate-200 bg-white text-slate-700 hover:bg-teal-50"
           }`}
           title="Switch to upload mode"
         >
@@ -359,7 +359,7 @@ function OCRScanner({ onClose, onResult }) {
 
       {/* 🎥 Camera Mode */}
       {mode === "camera" && (
-        <div className="w-full h-full flex flex-col items-center justify-center relative">
+        <div className="relative flex h-full w-full max-w-5xl flex-col items-center justify-center overflow-hidden rounded-2xl bg-slate-950 shadow-2xl">
           {!cameraError && !result ? (
             <>
               <video
@@ -373,7 +373,7 @@ function OCRScanner({ onClose, onResult }) {
 
               {/* 🔍 Status Overlay */}
               {cameraReady && (
-                <div className="absolute bottom-20 sm:bottom-10 text-white text-center bg-black/70 px-6 py-3 rounded-lg font-medium">
+                <div className="camera-overlay absolute bottom-20 rounded-lg bg-black/70 px-6 py-3 text-center font-medium text-white sm:bottom-10">
                   {loading ? "🔍 Scanning..." : "📷 Point camera at medicine label"}
                 </div>
               )}
@@ -382,10 +382,10 @@ function OCRScanner({ onClose, onResult }) {
               {!cameraReady && !cameraError && (
                 <div className="absolute inset-0 bg-black/70 flex items-center justify-center">
                   <div className="text-center">
-                    <div className="animate-spin text-white mb-4">
+                    <div className="camera-overlay mb-4 animate-spin text-white">
                       <div className="text-4xl">📷</div>
                     </div>
-                    <p className="text-white font-medium">Initializing camera...</p>
+                    <p className="camera-overlay font-medium text-white">Initializing camera...</p>
                   </div>
                 </div>
               )}
@@ -394,24 +394,24 @@ function OCRScanner({ onClose, onResult }) {
 
           {/* ⚠️ Camera Error */}
           {cameraError && (
-            <div className="absolute inset-0 bg-black/90 flex items-center justify-center p-4">
-              <div className="bg-gray-900 border border-gray-700 rounded-lg p-6 max-w-sm text-center">
+            <div className="absolute inset-0 flex items-center justify-center bg-white/90 p-4">
+              <div className="max-w-sm rounded-2xl border border-slate-200 bg-white p-6 text-center shadow-xl">
                 <p className="text-4xl mb-4">{getErrorMessage(cameraError.type).icon}</p>
                 <h3 className="text-xl font-bold text-white mb-2">
                   {getErrorMessage(cameraError.type).title}
                 </h3>
-                <p className="text-gray-300 text-sm mb-4">
+                <p className="mb-4 text-sm text-slate-600">
                   {getErrorMessage(cameraError.type).description}
                 </p>
                 
                 {cameraError.details && (
-                  <p className="text-xs text-gray-400 mb-4 bg-gray-800 p-2 rounded">
+                  <p className="mb-4 rounded bg-slate-50 p-2 text-xs text-slate-600">
                     {cameraError.details}
                   </p>
                 )}
 
                 {/* 🔧 Troubleshooting */}
-                <div className="mb-4 text-left bg-gray-800 p-3 rounded text-sm text-gray-300 max-h-40 overflow-y-auto">
+                <div className="mb-4 max-h-40 overflow-y-auto rounded border border-slate-100 bg-slate-50 p-3 text-left text-sm text-slate-600">
                   <p className="font-semibold mb-2">💡 Troubleshooting:</p>
                   {cameraError.type === "permission_denied" && (
                     <ul className="space-y-1 text-xs">
@@ -449,14 +449,14 @@ function OCRScanner({ onClose, onResult }) {
                   {isRetryable && (
                     <button
                       onClick={handleRetry}
-                      className="px-6 py-3 bg-yellow-600 text-white rounded-lg font-medium hover:bg-yellow-700 transition-all min-h-[44px]"
+                      className="min-h-[44px] rounded-lg bg-amber-100 px-6 py-3 font-medium text-amber-800 transition-all hover:bg-amber-200"
                     >
                       🔄 Retry Camera
                     </button>
                   )}
                   <button
                     onClick={() => handleModeSwitch("upload")}
-                    className="px-6 py-3 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-all min-h-[44px]"
+                    className="min-h-[44px] rounded-lg bg-gradient-to-r from-teal-700 to-teal-500 px-6 py-3 font-medium text-white transition-all hover:brightness-105"
                   >
                     📁 Upload Image Instead
                   </button>
@@ -470,9 +470,9 @@ function OCRScanner({ onClose, onResult }) {
       {/* 📁 Upload Mode */}
       {mode === "upload" && (
         <div className="flex flex-col items-center justify-center gap-6 w-full max-w-sm">
-          <div className="text-white text-center">
+          <div className="text-center text-slate-900">
             <p className="text-2xl sm:text-3xl font-bold mb-2">📁 Upload Medicine Image</p>
-            <p className="text-gray-300 text-sm">Take a photo of the medicine box or bottle label</p>
+            <p className="text-sm text-slate-600">Take a photo of the medicine box or bottle label</p>
           </div>
 
           {/* Hidden File Input */}
@@ -488,7 +488,7 @@ function OCRScanner({ onClose, onResult }) {
           <button
             onClick={() => fileInputRef.current?.click()}
             disabled={loading}
-            className="px-8 py-4 bg-blue-500 text-white rounded-lg hover:bg-blue-600 disabled:bg-gray-600 disabled:cursor-not-allowed text-lg font-medium transition-all min-h-[44px] w-full sm:w-auto"
+            className="min-h-[44px] w-full rounded-lg bg-gradient-to-r from-teal-700 to-teal-500 px-8 py-4 text-lg font-medium text-white transition-all hover:brightness-105 disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto"
             title="Click to select an image"
           >
             {loading ? "🔍 Processing..." : "📸 Choose Image"}
@@ -496,9 +496,9 @@ function OCRScanner({ onClose, onResult }) {
 
           {/* 🔍 Status */}
           {loading && (
-            <div className="text-white text-center bg-black/50 px-6 py-4 rounded-lg">
+            <div className="rounded-xl border border-teal-100 bg-white px-6 py-4 text-center text-slate-800 shadow-sm">
               <p className="text-base font-medium">🔍 Scanning image...</p>
-              <p className="text-sm text-gray-300 mt-2">This may take a few seconds</p>
+              <p className="mt-2 text-sm text-slate-600">This may take a few seconds</p>
             </div>
           )}
         </div>
@@ -506,12 +506,12 @@ function OCRScanner({ onClose, onResult }) {
 
       {/* 📊 Result */}
       {result && !loading && (
-        <div className="absolute bottom-20 sm:bottom-10 left-4 right-4 max-w-sm mx-auto bg-black/90 backdrop-blur-sm text-white p-6 rounded-lg border border-gray-600 max-h-[60vh] overflow-y-auto">
+        <div className="absolute bottom-20 left-4 right-4 mx-auto max-h-[60vh] max-w-sm overflow-y-auto rounded-2xl border border-teal-100 bg-white p-6 text-slate-900 shadow-xl sm:bottom-10">
           {result.found ? (
             // ✅ FOUND IN DATABASE
             <div>
               <p className="font-bold text-lg mb-3">✅ Medicine Found!</p>
-              <div className="space-y-2 text-sm bg-gray-900 p-3 rounded mb-4">
+              <div className="mb-4 space-y-2 rounded-xl border border-slate-100 bg-slate-50 p-3 text-sm">
                 <p className="font-semibold">{result.medicine?.name}</p>
                 {result.medicine?.brand && (
                   <p className="text-gray-300">Brand: {result.medicine.brand}</p>
@@ -534,10 +534,10 @@ function OCRScanner({ onClose, onResult }) {
             // ❌ ERROR
             <div>
               <p className="font-bold text-lg mb-2">❌ Error</p>
-              <p className="text-sm text-gray-300 mb-4">{result.error}</p>
+              <p className="mb-4 text-sm text-slate-600">{result.error}</p>
               <button
                 onClick={handleRetry}
-                className="w-full px-4 py-3 bg-yellow-600 text-white rounded-lg font-medium hover:bg-yellow-700 transition-all min-h-[44px]"
+                className="min-h-[44px] w-full rounded-lg bg-amber-100 px-4 py-3 font-medium text-amber-800 transition-all hover:bg-amber-200"
               >
                 🔄 Try Again
               </button>
@@ -546,8 +546,8 @@ function OCRScanner({ onClose, onResult }) {
             // ⚠️ NOT FOUND BUT EXTRACTED
             <div>
               <p className="font-bold text-lg mb-3">⚠️ Medicine Not Found in Database</p>
-              <p className="text-sm text-gray-300 mb-3">But I extracted this information:</p>
-              <div className="space-y-2 text-sm bg-gray-900 p-3 rounded mb-4">
+              <p className="mb-3 text-sm text-slate-600">But I extracted this information:</p>
+              <div className="mb-4 space-y-2 rounded-xl border border-slate-100 bg-slate-50 p-3 text-sm">
                 <p className="font-semibold">{result.extracted.name}</p>
                 {result.extracted.brand && (
                   <p className="text-gray-300">{result.extracted.brand}</p>
@@ -559,13 +559,13 @@ function OCRScanner({ onClose, onResult }) {
               <div className="flex gap-2">
                 <button
                   onClick={handleUseExtracted}
-                  className="flex-1 px-3 py-3 bg-green-600 text-white rounded-lg font-medium hover:bg-green-700 transition-all min-h-[44px]"
+                  className="min-h-[44px] flex-1 rounded-lg bg-green-100 px-3 py-3 font-medium text-green-800 transition-all hover:bg-green-200"
                 >
                   ✅ Use This
                 </button>
                 <button
                   onClick={handleRetry}
-                  className="flex-1 px-3 py-3 bg-yellow-600 text-white rounded-lg font-medium hover:bg-yellow-700 transition-all min-h-[44px]"
+                  className="min-h-[44px] flex-1 rounded-lg bg-amber-100 px-3 py-3 font-medium text-amber-800 transition-all hover:bg-amber-200"
                 >
                   🔄 Retry
                 </button>

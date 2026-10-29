@@ -1,12 +1,11 @@
-import { Navigate, useLocation } from "react-router-dom";
+import { Navigate } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
 import MedilogLoader from "../components/MedilogLoader";
 
 const ProtectedRoute = ({ children }) => {
-  const { user, loading, isOnboarded } = useAuth();
-  const location = useLocation();
+  const { user, loading } = useAuth();
 
-  if (loading || isOnboarded === null) {
+  if (loading) {
     return (
       <div className="flex h-screen w-full items-center justify-center">
         <MedilogLoader />
@@ -16,14 +15,6 @@ const ProtectedRoute = ({ children }) => {
 
   if (!user) {
     return <Navigate to="/login" replace />;
-  }
-
-  if (!isOnboarded && location.pathname !== "/onboarding") {
-    return <Navigate to="/onboarding" replace />;
-  }
-
-  if (isOnboarded && location.pathname === "/onboarding") {
-    return <Navigate to="/dashboard" replace />;
   }
 
   return children;

@@ -8,8 +8,8 @@ function AlertCard({ alert, onCheck }) {
     <div
       className={`group flex items-start gap-4 p-4 sm:p-5 rounded-2xl border hover:shadow-sm transition-all duration-300 my-3 ${
         isCritical
-          ? "bg-red-50 border-red-200 hover:border-red-300"
-          : "bg-amber-50 border-amber-200 hover:border-amber-300"
+          ? "bg-[#FEE2E2] border-[#FECACA] hover:border-[#DC2626]"
+          : "bg-[#FEF3C7] border-[#FDE68A] hover:border-[#B45309]"
       }`}
     >
       <input
@@ -20,13 +20,13 @@ function AlertCard({ alert, onCheck }) {
 
       <div
         className={`p-2.5 rounded-xl flex-shrink-0 ${
-          isCritical ? "bg-red-100" : "bg-amber-100"
+          isCritical ? "bg-[#FEE2E2]" : "bg-[#FEF3C7]"
         }`}
       >
         {Icon && (
           <Icon
             className={`w-5 h-5 ${
-              isCritical ? "text-red-600" : "text-amber-600"
+              isCritical ? "text-[#DC2626]" : "text-[#B45309]"
             }`}
           />
         )}
@@ -35,7 +35,7 @@ function AlertCard({ alert, onCheck }) {
       <div className="flex-1 min-w-0">
         <h3
           className={`font-semibold ${
-            isCritical ? "text-red-900" : "text-amber-900"
+            isCritical ? "text-[#DC2626]" : "text-[#B45309]"
           }`}
         >
           {alert.title}
@@ -43,7 +43,7 @@ function AlertCard({ alert, onCheck }) {
 
         <p
           className={`text-sm mt-1 ${
-            isCritical ? "text-red-700" : "text-amber-700"
+            isCritical ? "text-[#DC2626]" : "text-[#B45309]"
           }`}
         >
           {alert.message}
@@ -52,7 +52,7 @@ function AlertCard({ alert, onCheck }) {
 
       <ChevronRight
         className={`w-5 h-5 flex-shrink-0 group-hover:translate-x-0.5 transition-transform ${
-          isCritical ? "text-red-400" : "text-amber-400"
+          isCritical ? "text-[#DC2626]" : "text-[#B45309]"
         }`}
       />
     </div>

@@ -1,94 +1,148 @@
+
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useRef, useState } from "react";
-import Logo from "../components/Logo";
 import {
   GoogleAuthProvider,
   signInWithPopup,
   signInWithRedirect,
+  getRedirectResult,
+  getAdditionalUserInfo,
 } from "firebase/auth";
+
 import { auth } from "../firebase/firebase";
+import { useAuth } from "../hooks/useAuth";
 import { sendUserToBackend } from "../services/api";
+import SignInCard from "../components/login/SignInCard";
+import SignUpCard from "../components/login/SignUpCard";
 
-
-function Login() {
-
+function Login({ mode = "login" }) {
   const navigate = useNavigate();
+  const { setUserData } = useAuth();
   const [loading, setLoading] = useState(false);
   const isLoggingIn = useRef(false);
+  const redirectChecked = useRef(false);
 
-  const handleClick = async () => {
+  const finishLogin = useCallback(async (user, profile) => {
+    const backendRes = await sendUserToBackend(user, profile);
+
+    if (!backendRes) {
+      alert("Backend not connected");
+      return;
+    }
+
+    setUserData(backendRes.user);
+    navigate("/dashboard", { replace: true });
+  }, [navigate, setUserData]);
+
+  useEffect(() => {
+    if (redirectChecked.current) return;
+    redirectChecked.current = true;
+
+    const handleRedirect = async () => {
+      try {
+        const result = await getRedirectResult(auth);
+
+        if (result) {
+          isLoggingIn.current = true;
+          setLoading(true);
+          const role = sessionStorage.getItem("medilog-signup-role");
+          sessionStorage.removeItem("medilog-signup-role");
+          await finishLogin(
+            result.user,
+            mode === "signup" && getAdditionalUserInfo(result)?.isNewUser
+              ? { role: role || "individual" }
+              : undefined
+          );
+        }
+      } catch (error) {
+        console.error("Google redirect login error:", error);
+        alert("Login failed. Please try again.");
+      } finally {
+        isLoggingIn.current = false;
+        setLoading(false);
+      }
+    };
+
+    handleRedirect();
+  }, [finishLogin, mode]);
+
+  const handleClick = async (role) => {
     if (isLoggingIn.current) return;
 
-    try {
-      isLoggingIn.current = true;
-      setLoading(true);
+    isLoggingIn.current = true;
+    setLoading(true);
 
+    try {
       const provider = new GoogleAuthProvider();
-      let result;
+      provider.setCustomParameters({ prompt: "select_account" });
 
       try {
-        result = await signInWithPopup(auth, provider);
-      } catch (popupError) {
-        await signInWithRedirect(auth, provider);
-        return;
-      }
+        const result = await signInWithPopup(auth, provider);
+        await finishLogin(
+          result.user,
+          mode === "signup" && getAdditionalUserInfo(result)?.isNewUser
+            ? { role }
+            : undefined
+        );
+      } catch (error) {
+        if (
+          error.code === "auth/popup-blocked" ||
+          error.code === "auth/operation-not-supported-in-this-environment"
+        ) {
+          if (mode === "signup") {
+            sessionStorage.setItem("medilog-signup-role", role || "individual");
+          }
+          await signInWithRedirect(auth, provider);
+          return;
+        }
 
-      const user = result.user;
-      const backendRes = await sendUserToBackend(user);
-
-      if (!backendRes) {
-        alert("Backend not connected");
-        return;
-      }
-
-      if (backendRes.isFirstLogin) {
-        navigate("/onboarding");
-      } else {
-        navigate("/dashboard");
+        throw error;
       }
     } catch (error) {
       console.error("Login error:", error);
-      alert("Login failed");
+      alert("Login failed. Please try again.");
+    } finally {
       isLoggingIn.current = false;
       setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-[#F4F9F8] px-4 relative overflow-hidden">
-      <div className="absolute -bottom-24 -right-24 w-96 h-96 bg-[#B2DFDB] blur-[120px] opacity-30 rounded-full -z-10" />
+  <main className="auth-page relative isolate flex min-h-screen w-full items-center justify-center overflow-hidden px-4 py-8 sm:px-6">
 
-      <div className="w-full max-w-md bg-white rounded-[2.5rem] shadow-sm p-10 text-center border border-gray-100">
-        <div className="flex justify-center">
-          <Logo />
-        </div>
+    {/* Full-page teal background */}
+    <div
+      aria-hidden="true"
+      className="pointer-events-none fixed inset-0 -z-10 overflow-hidden"
+    >
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_50%_0%,rgba(204,251,241,0.65)_0%,rgba(248,250,251,0.8)_48%,rgba(236,253,245,0.85)_100%)]" />
 
-        <h3 className="mt-8 text-2xl font-serif text-[#1A2E2C]">
-          Sign in to MediLog
-        </h3>
+      <div className="absolute -top-48 left-1/2 h-[650px] w-[1000px] max-w-[140vw] -translate-x-1/2 rounded-full bg-teal-500/[0.12] blur-[150px]" />
 
-        <p className="mt-2 text-sm text-gray-500 font-light">
-          Your secure medical narrative awaits.
-        </p>
+      <div className="absolute -bottom-64 left-1/2 h-[650px] w-[1100px] max-w-[150vw] -translate-x-1/2 rounded-full bg-emerald-500/[0.08] blur-[160px]" />
 
-        <button
-          onClick={handleClick}
-          disabled={loading}
-          className="mt-8 w-full flex items-center justify-center gap-3 border border-gray-200 rounded-full py-4 text-gray-700 font-medium hover:bg-gray-50 hover:shadow-md transition-all duration-300 disabled:opacity-50"
-        >
-          <img
-            src="/assets/google-color.svg"
-            alt="Google"
-            className="w-5 h-5"
-          />
-          {loading ? "Signing in..." : "Continue with Google"}
-        </button>
+      <div className="absolute top-1/3 -left-40 h-[500px] w-[500px] rounded-full bg-cyan-500/[0.045] blur-[150px]" />
 
-        <footer className="mt-10 text-[10px] text-gray-400 tracking-widest uppercase">
-          Verified Authentication
-        </footer>
-      </div>
+      <div className="absolute top-1/3 -right-40 h-[500px] w-[500px] rounded-full bg-teal-400/[0.045] blur-[150px]" />
     </div>
+
+    {/* Render the appropriate existing account form. */}
+    <div className="relative z-10 w-full max-w-[420px]">
+      {mode === "signup" ? (
+        <SignUpCard
+          onGoogleClick={(role) => handleClick(role)}
+          loading={loading}
+        />
+      ) : (
+        <SignInCard
+          onGoogleClick={() => handleClick()}
+          googleLoading={loading}
+        />
+      )}
+    </div>
+
+  </main>
+
   );
 }
 

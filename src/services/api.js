@@ -41,13 +41,13 @@ export const scanMedicineOCR = (file) => {
   const formData = new FormData();
   formData.append("image", file);
 
-  return safeFetch(`${BASE_URL}/ocr/scan`, {
+  return safeFetch(`${BASE_URL}/api/ocr/scan`, {
     method: "POST",
     body: formData,
   });
 };
 
-export const sendUserToBackend = async (firebaseUser) => {
+export const sendUserToBackend = async (firebaseUser, profile) => {
   if (!firebaseUser) return null;
 
   try {
@@ -55,6 +55,7 @@ export const sendUserToBackend = async (firebaseUser) => {
 
     return await safeFetch(`${BASE_URL}/api/users/firebase-login`, {
       method: "POST",
+      body: JSON.stringify(profile ? { profile } : {}),
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
@@ -65,19 +66,6 @@ export const sendUserToBackend = async (firebaseUser) => {
     console.error("Backend login failed:", error.message);
     return null;
   }
-};
-
-export const completeOnboarding = async (firebaseUser, data) => {
-  const token = await firebaseUser.getIdToken();
-
-  return safeFetch(`${BASE_URL}/api/users/complete-onboarding`, {
-    method: "PUT",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`,
-    },
-    body: JSON.stringify(data),
-  });
 };
 
 export const addUserMedicine = async (firebaseUser, data) => {
@@ -102,6 +90,77 @@ export const getUserMedicines = async (firebaseUser) => {
     },
   });
 };
+
+const getAuthenticatedHeaders = async (firebaseUser, includeContentType = false) => {
+  if (!firebaseUser) {
+    throw new Error("User not logged in");
+  }
+
+  const token = await firebaseUser.getIdToken();
+  return {
+    ...(includeContentType ? { "Content-Type": "application/json" } : {}),
+    Authorization: `Bearer ${token}`,
+  };
+};
+
+export const getPublishedMedicineBundles = async (
+  firebaseUser,
+  locationCoordinates
+) => {
+  const params = new URLSearchParams();
+  if (locationCoordinates) {
+    params.set("latitude", String(locationCoordinates.latitude));
+    params.set("longitude", String(locationCoordinates.longitude));
+  }
+  const query = params.size ? `?${params.toString()}` : "";
+
+  return safeFetch(`${BASE_URL}/api/bundles${query}`, {
+    headers: await getAuthenticatedHeaders(firebaseUser),
+  });
+};
+
+export const getMyMedicineBundles = async (firebaseUser) =>
+  safeFetch(`${BASE_URL}/api/bundles/mine`, {
+    headers: await getAuthenticatedHeaders(firebaseUser),
+  });
+
+export const createMedicineBundle = async (firebaseUser, bundle) =>
+  safeFetch(`${BASE_URL}/api/bundles`, {
+    method: "POST",
+    headers: await getAuthenticatedHeaders(firebaseUser, true),
+    body: JSON.stringify(bundle),
+  });
+
+export const updateMedicineBundleDraft = async (
+  firebaseUser,
+  bundleId,
+  bundle
+) =>
+  safeFetch(`${BASE_URL}/api/bundles/${encodeURIComponent(bundleId)}`, {
+    method: "PATCH",
+    headers: await getAuthenticatedHeaders(firebaseUser, true),
+    body: JSON.stringify(bundle),
+  });
+
+export const publishMedicineBundle = async (firebaseUser, bundleId) =>
+  safeFetch(
+    `${BASE_URL}/api/bundles/${encodeURIComponent(bundleId)}/publish`,
+    {
+      method: "POST",
+      headers: await getAuthenticatedHeaders(firebaseUser, true),
+    }
+  );
+
+export const updateMedicineBundleStatus = async (
+  firebaseUser,
+  bundleId,
+  status
+) =>
+  safeFetch(`${BASE_URL}/api/bundles/${encodeURIComponent(bundleId)}/status`, {
+    method: "PATCH",
+    headers: await getAuthenticatedHeaders(firebaseUser, true),
+    body: JSON.stringify({ status }),
+  });
 
 export const deleteUserMedicine = async (firebaseUser, id) => {
   const token = await firebaseUser.getIdToken();

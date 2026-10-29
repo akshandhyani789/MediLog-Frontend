@@ -2,14 +2,10 @@ import { useState, useEffect } from "react";
 import TopNav from "../components/dashboard/rightside/TopNav";
 import LeftSide from "../components/dashboard/leftside/LeftSide";
 import SectionsDataRight from "../components/dashboard/rightside/SectionsDataRight";
-import { useAuth } from "../hooks/useAuth";
 
 function Dashboard() {
   const [activePage, setActivePage] = useState("Dashboard");
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-
-  const { userData } = useAuth();
-  const userRole = userData?.role || "individual";
 
   useEffect(() => {
     const handleResize = () => {
@@ -23,7 +19,7 @@ function Dashboard() {
   }, []);
 
   return (
-    <div className="flex min-h-screen w-full overflow-x-hidden bg-gradient-to-br from-slate-50 via-teal-50 to-slate-100">
+    <div className="dashboard-shell flex min-h-screen w-full overflow-x-clip bg-gradient-to-br from-[#F0FAF8] via-white to-[#E0F7F2]">
       <LeftSide
         setActivePage={setActivePage}
         activeNav={activePage}
@@ -38,7 +34,7 @@ function Dashboard() {
         />
       )}
 
-      <main className="flex-1 min-w-0 w-full flex flex-col transition-all duration-300 ml-0 lg:ml-56 xl:ml-64 overflow-x-hidden">
+      <main className="ml-0 flex min-w-0 w-full flex-1 flex-col overflow-x-clip transition-all duration-300 lg:ml-64">
         <TopNav
           activePage={activePage}
           setIsSidebarOpen={setIsSidebarOpen}

@@ -1,60 +1,62 @@
-import { useNavigate } from "react-router-dom";
-import { useState } from "react";
 import Logo from "../Logo";
-import MedilogLoader from "../MedilogLoader";
+import JoinBtn from "../JoinBtn";
 
-function Navbar({ btnData }) {
-  const [isLoading, setIsLoading] = useState(false);
-  const navigate = useNavigate();
-
-  const handelJoin = () => {
-    setIsLoading(true);
-    setTimeout(() => {
-      setIsLoading(false);
-      navigate("/login");
-    }, 2000);
-  };
-
+function Navbar() {
   const handleScroll = (id, e) => {
     if (e) e.preventDefault();
-    const element = document.getElementById(id);
-    if (element) {
-      element.scrollIntoView({ behavior: "smooth" });
-    }
+
+    document.getElementById(id)?.scrollIntoView({
+      behavior: "smooth",
+      block: "start",
+    });
   };
 
   return (
-    <nav className="flex justify-around items-center p-4 md:fixed w-full bg-white shadow-md z-10">
-      <Logo handleScroll={handleScroll} />
+    <nav className="fixed top-0 left-0 flex w-full items-center justify-between px-5 md:px-10 py-4 bg-gradient-to-br from-[#0F766E] to-[#14B8A6] backdrop-blur-xl shadow-md shadow-teal-900/10 z-50 border-b border-white/20 rounded-b-4xl">
+      <Logo handleScroll={handleScroll} variant="light" />
 
-      <ul className="gap-6 hidden md:flex items-center text-md md:text-lg font-medium">
-        <li className="hover:text-[#0F766E] cursor-pointer hover:scale-105 transition-all duration-75">
-          <a href="#hero" onClick={(e) => handleScroll("hero", e)}>Home</a>
+      <ul className="hidden md:flex items-center gap-6 lg:gap-8 text-sm lg:text-base font-medium">
+        <li>
+          <a
+            href="#problem"
+            onClick={(e) => handleScroll("about", e)}
+            className="text-white hover:text-[#D5FFF6] transition-colors duration-300"
+          >
+            Problem
+          </a>
         </li>
-        <li className="hover:text-[#0F766E] cursor-pointer hover:scale-105 transition-all duration-75">
-          <a href="#features" onClick={(e) => handleScroll("features", e)}>Features</a>
+        <li>
+          <a
+            href="#workflow"
+            onClick={(e) => handleScroll("features", e)}
+            className="text-white hover:text-[#D5FFF6] transition-colors duration-300"
+          >
+            How It Works
+          </a>
         </li>
-        <li className="hover:text-[#0F766E] cursor-pointer hover:scale-105 transition-all duration-75">
-          <a href="#about" onClick={(e) => handleScroll("about", e)}>About</a>
+        <li>
+          <a
+            href="#features"
+            onClick={(e) => handleScroll("hero", e)}
+            className="text-white hover:text-[#D5FFF6] transition-colors duration-300"
+          >
+            Features
+          </a>
+        </li>
+        <li>
+          <a
+            href="#about"
+            onClick={(e) => handleScroll("about", e)}
+            className="text-white hover:text-[#D5FFF6] transition-colors duration-300"
+          >
+            About Us
+          </a>
         </li>
       </ul>
 
       <div className="flex items-center gap-4">
-        <button
-          onClick={handelJoin}
-          className="hidden sm:flex hover:text-[#0F766E] cursor-pointer hover:scale-105 transition-all duration-75 text-md md:text-lg font-medium"
-        >
-          Sing In
-        </button>
-        <button
-          onClick={handelJoin}
-          className="px-5 py-2 bg-[#0F766E] rounded-lg text-white hover:scale-105 transition-all duration-75 shadow-2xl font-medium text-md md:text-lg"
-        >
-          Sign Up
-        </button>
+        <JoinBtn />
       </div>
-
-      {isLoading && <MedilogLoader />}
     </nav>
   );
 }

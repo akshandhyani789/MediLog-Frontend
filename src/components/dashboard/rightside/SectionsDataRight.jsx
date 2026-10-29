@@ -1,4 +1,5 @@
 import React, { useState, useCallback } from "react";
+
 import Dashboard from "./sections/DashboardSection";
 import Profile from "./sections/ProfileSection";
 import Alerts from "./sections/AlertsSection";
@@ -13,6 +14,8 @@ import OCRScanner from "./componant/OCRScanner";
 import { getMedicineByBarcode } from "../../../services/api";
 import { useAlertsData } from "../../../hooks/useAlertData";
 import { useAuth } from "../../../hooks/useAuth";
+import FindMedicineSection from "./componant/findMedicine/FindMedicineSection";
+import MyMedicineBundlesSection from "./componant/findMedicine/MyMedicineBundlesSection";
 
 function SectionsDataRight({ activePage, setActivePage }) {
   const { userData, user } = useAuth();
@@ -34,6 +37,8 @@ function SectionsDataRight({ activePage, setActivePage }) {
       />
     ),
     MyMedicines: <UserMedicineSection refetchTrigger={refetchTrigger} />,
+    FindMedicine: <FindMedicineSection/>,
+    MyMedicineBundles: <MyMedicineBundlesSection />,
     Alerts: <Alerts alertsData={alertsData} />,
     Profile: <Profile />,
   };
@@ -75,18 +80,23 @@ function SectionsDataRight({ activePage, setActivePage }) {
   }, []);
 
   return (
-    <div className="relative min-h-[calc(100vh-64px)] w-full overflow-y-auto bg-gradient-to-br from-slate-50 via-teal-50 to-slate-100">
-      <div className="absolute inset-0 opacity-40 pointer-events-none overflow-hidden">
-        <div className="absolute top-[-100px] left-[-100px] w-[300px] h-[300px] bg-teal-300 blur-[120px] rounded-full" />
-        <div className="absolute bottom-[-120px] right-[-120px] w-[350px] h-[350px] bg-blue-300 blur-[140px] rounded-full" />
+    <div className="dashboard-content relative min-h-[calc(100vh-64px)] w-full overflow-y-auto bg-gradient-to-br from-[#F0FAF8] via-white to-[#E0F7F2]">
+      {/* Subtle teal background glow */}
+      <div className="pointer-events-none absolute inset-0 overflow-hidden">
+        <div className="absolute -left-24 -top-24 h-[300px] w-[300px] rounded-full bg-teal-500/[0.035] blur-[120px]" />
+
+        <div className="absolute -bottom-24 right-0 h-[350px] w-[350px] rounded-full bg-cyan-500/[0.025] blur-[140px]" />
       </div>
 
-      <div className="relative z-10 min-h-[calc(100vh-64px)]">
+      {/* Active page content */}
+      <div className="relative z-10 min-h-[calc(100vh-64px)] text-slate-900">
         {pages[activePage] || pages.Dashboard}
       </div>
 
+      {/* Existing add medicine button */}
       <FloatingButton onClick={handleOpenModal} />
 
+      {/* Existing add medicine modal */}
       <AddMedicineModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
@@ -98,6 +108,7 @@ function SectionsDataRight({ activePage, setActivePage }) {
         onMedicineAdded={handleMedicineAdded}
       />
 
+      {/* Existing barcode scanner */}
       {isScannerOpen && (
         <Scanner
           onScan={handleScanSuccess}
@@ -106,6 +117,7 @@ function SectionsDataRight({ activePage, setActivePage }) {
         />
       )}
 
+      {/* Existing OCR scanner */}
       {isOCRScannerOpen && (
         <OCRScanner
           onClose={() => setIsOCRScannerOpen(false)}

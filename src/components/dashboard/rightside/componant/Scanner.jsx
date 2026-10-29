@@ -213,7 +213,7 @@ function Scanner({ onScan, onClose, setIsOCRScannerOpen }) {
   }, [onScan]);
 
   return (
-    <div className="fixed inset-0 bg-black/90 z-50 flex flex-col items-center justify-center p-4">
+    <div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-gradient-to-br from-[#F0FDFA] via-[#F8FAFB] to-[#ECFDF5] p-4">
 
       {/* ❌ Close Button */}
       <button
@@ -222,20 +222,20 @@ function Scanner({ onScan, onClose, setIsOCRScannerOpen }) {
           await safeStopScanner();
           onClose();
         }}
-        className="absolute top-4 right-4 bg-white text-black px-4 py-2 rounded-lg font-medium hover:bg-gray-100 transition-all min-h-[44px] min-w-[44px] flex items-center justify-center"
+        className="absolute right-4 top-4 flex min-h-[44px] min-w-[44px] items-center justify-center rounded-lg border border-slate-200 bg-white px-4 py-2 font-medium text-slate-800 shadow-sm transition-all hover:bg-teal-50"
         title="Close scanner"
       >
         ✕
       </button>
 
       {/* 📷 Scanner Container */}
-      <div className="flex flex-col items-center gap-4 w-full max-w-md">
+      <div className="flex w-full max-w-md flex-col items-center gap-4 rounded-2xl border border-slate-200 bg-white/90 p-5 shadow-xl shadow-slate-900/10 sm:p-7">
         {!cameraError ? (
           <>
-            <div id="reader" className="w-full max-w-sm" />
+            <div id="reader" className="w-full max-w-sm overflow-hidden rounded-xl bg-slate-950 p-1" />
             
             {/* 🧠 Message */}
-            <p className="text-white text-center text-base sm:text-lg px-4 font-medium">
+            <p className="px-4 text-center text-base font-medium text-slate-700 sm:text-lg">
               {message}
             </p>
           </>
@@ -244,21 +244,21 @@ function Scanner({ onScan, onClose, setIsOCRScannerOpen }) {
           <div className="w-full space-y-6">
             <div className="text-center">
               <p className="text-4xl mb-3">{getErrorMessage(cameraError.type).icon}</p>
-              <h3 className="text-xl font-bold text-white mb-2">
+              <h3 className="mb-2 text-xl font-bold text-slate-900">
                 {getErrorMessage(cameraError.type).title}
               </h3>
-              <p className="text-gray-300 text-sm mb-4">
+              <p className="mb-4 text-sm text-slate-600">
                 {getErrorMessage(cameraError.type).description}
               </p>
               {cameraError.details && (
-                <p className="text-xs text-gray-400 mt-2">
+                <p className="mt-2 text-xs text-slate-500">
                   Technical details: {cameraError.details}
                 </p>
               )}
             </div>
 
             {/* 🔍 Debug Info */}
-            <div className="bg-gray-900 rounded-lg p-4 text-left text-xs text-gray-400 space-y-1">
+            <div className="space-y-1 rounded-lg border border-slate-200 bg-slate-50 p-4 text-left text-xs text-slate-600">
               <p>🔧 Debug Info:</p>
               <p>• Error Type: {cameraError.type}</p>
               <p>• Protocol: {window.location.protocol}</p>
@@ -271,7 +271,7 @@ function Scanner({ onScan, onClose, setIsOCRScannerOpen }) {
         {isRetryable && (
           <button
             onClick={handleRetry}
-            className="mt-3 px-6 py-3 bg-yellow-500 text-white rounded-lg font-medium hover:bg-yellow-600 transition-all min-h-[44px] w-full sm:w-auto"
+            className="mt-3 min-h-[44px] w-full rounded-lg bg-amber-100 px-6 py-3 font-medium text-amber-800 transition-all hover:bg-amber-200 sm:w-auto"
             title="Retry camera access"
           >
             🔄 Retry Camera
@@ -285,7 +285,7 @@ function Scanner({ onScan, onClose, setIsOCRScannerOpen }) {
             await safeStopScanner();
             setIsOCRScannerOpen(true);
           }}
-          className="mt-2 px-6 py-3 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-all min-h-[44px] w-full sm:w-auto"
+          className="mt-2 min-h-[44px] w-full rounded-lg bg-gradient-to-r from-teal-700 to-teal-500 px-6 py-3 font-medium text-white transition-all hover:brightness-105 sm:w-auto"
           title="Use OCR text recognition instead"
         >
           📝 Read Text (OCR)
@@ -293,7 +293,7 @@ function Scanner({ onScan, onClose, setIsOCRScannerOpen }) {
 
         {/* ℹ️ Help Text */}
         {cameraError && (
-          <div className="mt-4 p-4 bg-blue-900/50 text-blue-100 rounded-lg text-center text-sm">
+          <div className="mt-4 rounded-lg border border-blue-100 bg-blue-50 p-4 text-center text-sm text-blue-800">
             <p className="font-semibold mb-2">💡 Troubleshooting Tips:</p>
             <ul className="text-left space-y-1 text-xs">
               {cameraError.type === "permission_denied" && (

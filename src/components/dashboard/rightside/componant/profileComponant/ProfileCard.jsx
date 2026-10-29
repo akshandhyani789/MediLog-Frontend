@@ -1,203 +1,180 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Camera, Trash2 } from "lucide-react";
+import { Camera, UserRound, CheckCircle2 } from "lucide-react";
 import { useAuth } from "../../../../../hooks/useAuth";
 import { updateUserProfile } from "../../../../../services/api";
 
 export default function ProfileCard({ name, email }) {
   const fileInputRef = useRef(null);
   const { user, userData, setUserData } = useAuth();
+
   const [profileImage, setProfileImage] = useState("");
   const [uploading, setUploading] = useState(false);
 
-  const displayName = name || userData?.name || "User";
-  const displayEmail = email || userData?.email || "";
-  const BaseProfileImage = user?.photoURL || "";
+  const displayName =
+    name || userData?.name || user?.displayName || "User";
+
+  const displayEmail = email || userData?.email || user?.email || "";
+  const baseProfileImage = user?.photoURL || "";
+  const initials =
+    displayName
+      .trim()
+      .split(/\s+/)
+      .slice(0, 2)
+      .map((part) => part[0])
+      .join("")
+      .toUpperCase() || "U";
 
   useEffect(() => {
-    if (userData?.profileImage && !profileImage) {
-      setProfileImage(userData.profileImage);
-    }
+    setProfileImage(userData?.profileImage || "");
   }, [userData?.profileImage]);
 
-  const compressImage = (file) => {
-    return new Promise((resolve, reject) => {
+  const compressImage = (file) =>
+    new Promise((resolve, reject) => {
       const reader = new FileReader();
 
-      reader.onload = (e) => {
-        const img = new Image();
+      reader.onload = (event) => {
+        const image = new Image();
 
-        img.onload = () => {
+        image.onload = () => {
+          const maxSize = 400;
+          const scale = Math.min(
+            1,
+            maxSize / image.width,
+            maxSize / image.height
+          );
+
           const canvas = document.createElement("canvas");
+          canvas.width = Math.round(image.width * scale);
+          canvas.height = Math.round(image.height * scale);
 
-          const MAX_WIDTH = 400;
-          const MAX_HEIGHT = 400;
+          const context = canvas.getContext("2d");
 
-          let width = img.width;
-          let height = img.height;
-
-          if (width > height) {
-            if (width > MAX_WIDTH) {
-              height = height * (MAX_WIDTH / width);
-              width = MAX_WIDTH;
-            }
-          } else {
-            if (height > MAX_HEIGHT) {
-              width = width * (MAX_HEIGHT / height);
-              height = MAX_HEIGHT;
-            }
+          if (!context) {
+            reject(new Error("Unable to process this image."));
+            return;
           }
 
-          canvas.width = width;
-          canvas.height = height;
-
-          const ctx = canvas.getContext("2d");
-          ctx.drawImage(img, 0, 0, width, height);
-
-          const compressedBase64 = canvas.toDataURL("image/jpeg", 0.7);
-          resolve(compressedBase64);
+          context.drawImage(image, 0, 0, canvas.width, canvas.height);
+          resolve(canvas.toDataURL("image/jpeg", 0.7));
         };
 
-        img.onerror = reject;
-        img.src = e.target.result;
+        image.onerror = () => reject(new Error("Unable to read this image."));
+        image.src = event.target.result;
       };
 
-      reader.onerror = reject;
+      reader.onerror = () => reject(new Error("Unable to read this file."));
       reader.readAsDataURL(file);
     });
-  };
 
-  const handleImageUpload = async (e) => {
-    const file = e.target.files[0];
-
+  const handleImageUpload = async (event) => {
+    const file = event.target.files?.[0];
     if (!file) return;
 
     if (!file.type.startsWith("image/")) {
       alert("Please select a valid image file.");
+      event.target.value = "";
       return;
     }
 
     if (file.size > 5 * 1024 * 1024) {
-      alert("Image too large. Max 5MB allowed.");
+      alert("Image too large. Maximum size is 5 MB.");
+      event.target.value = "";
       return;
     }
 
+    const previousImage = profileImage;
+
     try {
       setUploading(true);
 
-      const compressedBase64Image = await compressImage(file);
-
-      // Show image immediately
-      setProfileImage(compressedBase64Image);
+      const compressedImage = await compressImage(file);
+      setProfileImage(compressedImage);
 
       const updatedUser = await updateUserProfile({
-        profileImage: compressedBase64Image,
+        profileImage: compressedImage,
       });
 
-      setUserData((prev) => ({
-        ...prev,
+      setUserData((previous) => ({
+        ...(previous || userData || {}),
         ...updatedUser,
-        profileImage: compressedBase64Image,
+        profileImage: compressedImage,
       }));
     } catch (error) {
-      console.error("❌ Failed to upload profile image:", error);
-      alert("Failed to upload profile image.");
+      console.error("Failed to upload profile image:", error);
+      setProfileImage(previousImage);
+      alert("Failed to upload profile image. Please try again.");
     } finally {
       setUploading(false);
-
-      if (fileInputRef.current) {
-        fileInputRef.current.value = "";
-      }
+      if (fileInputRef.current) fileInputRef.current.value = "";
     }
   };
 
-  const handleRemoveImage = async () => {
-    try {
-      setUploading(true);
-
-      setProfileImage("");
-
-      const updatedUser = await updateUserProfile({
-        profileImage: "",
-      });
-
-      setUserData((prev) => ({
-        ...prev,
-        ...updatedUser,
-        profileImage: "",
-      }));
-    } catch (error) {
-      console.error("❌ Failed to remove profile image:", error);
-      alert("Failed to remove profile image.");
-    } finally {
-      setUploading(false);
-    }
-  };
+  const currentImage = profileImage || baseProfileImage;
 
   return (
-    <div className="w-full bg-white rounded-3xl border border-gray-200 shadow-sm p-6 sm:p-8 flex flex-col items-center text-center self-start hover:border-gray-300 transition-all duration-300">
-      <div className="relative group">
-        {profileImage ? (
-          <img
-            src={profileImage}
-            alt="Profile"
-            className="w-28 h-28 rounded-full object-cover shadow-lg border border-gray-200"
+    <section className="relative overflow-hidden rounded-2xl border border-white/[0.09] bg-white/[0.025] shadow-[0_20px_80px_rgba(0,0,0,0.16)] backdrop-blur-2xl transition-colors duration-300 hover:border-white/[0.13]">
+      <div className="pointer-events-none absolute inset-y-0 left-0 w-1/2 bg-gradient-to-r from-teal-400/[0.055] to-transparent" />
+
+      <div className="relative flex flex-col gap-5 px-5 py-6 sm:flex-row sm:items-center sm:justify-between sm:px-7 sm:py-6">
+        <div className="flex min-w-0 items-center gap-4 sm:gap-5">
+          <div className="relative shrink-0">
+            <div className="flex h-[68px] w-[68px] items-center justify-center overflow-hidden rounded-full border border-teal-400/30 bg-gradient-to-br from-teal-400/20 to-teal-900/30 text-lg font-bold text-teal-100 shadow-[0_0_25px_rgba(0,194,199,0.08)] sm:h-[74px] sm:w-[74px]">
+              {currentImage ? (
+                <img
+                  src={currentImage}
+                  alt={`${displayName}'s profile`}
+                  className="h-full w-full object-cover"
+                />
+              ) : (
+                <span>{initials}</span>
+              )}
+            </div>
+
+            <span className="absolute bottom-0 right-0 flex h-5 w-5 items-center justify-center rounded-full border-2 border-[#101515] bg-teal-400">
+              <CheckCircle2 className="h-3 w-3 text-[#062020]" />
+            </span>
+          </div>
+
+          <div className="min-w-0">
+            <h2 className="truncate text-xl font-semibold tracking-tight text-gray-100 sm:text-2xl">
+              {displayName}
+            </h2>
+
+            <p className="mt-1 break-all text-sm text-gray-400">
+              {displayEmail}
+            </p>
+
+            <div className="mt-2 flex items-center gap-2">
+              <span className="h-1.5 w-1.5 rounded-full bg-teal-300" />
+              <span className="text-xs font-medium text-gray-400">
+                {userData?.role === "vendor" ? "Vendor account" : "Individual account"}
+              </span>
+              <span className="text-gray-600">·</span>
+              <span className="text-xs text-gray-500">MediLog</span>
+            </div>
+          </div>
+        </div>
+
+        <div className="flex shrink-0 flex-wrap gap-3 sm:justify-end">
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="image/*"
+            onChange={handleImageUpload}
+            className="hidden"
           />
-        ) : (
-          <img src={BaseProfileImage} alt="Profile" className="w-28 h-28 rounded-full object-cover shadow-lg border border-gray-200" />
-        )}
 
-        <input
-          type="file"
-          accept="image/*"
-          ref={fileInputRef}
-          onChange={handleImageUpload}
-          className="hidden"
-        />
-
-        <button
-          type="button"
-          disabled={uploading}
-          onClick={() => fileInputRef.current?.click()}
-          className="absolute bottom-0 right-0 w-10 h-10 bg-white rounded-full flex items-center justify-center text-gray-700 shadow-lg border border-gray-200 hover:bg-gray-50 transition-all duration-300 group-hover:scale-110 disabled:opacity-60"
-        >
-          <Camera className="w-5 h-5" />
-        </button>
+          <button
+            type="button"
+            disabled={uploading}
+            onClick={() => fileInputRef.current?.click()}
+            className="inline-flex items-center justify-center gap-2 rounded-xl border border-white/[0.12] bg-white/[0.035] px-4 py-3 text-sm font-semibold text-gray-200 transition hover:border-teal-300/30 hover:bg-teal-300/[0.07] disabled:cursor-not-allowed disabled:opacity-50"
+          >
+            <Camera className="h-4 w-4 text-teal-300" />
+            {uploading ? "Uploading..." : "Change photo"}
+          </button>
+        </div>
       </div>
-
-      <h2 className="mt-6 text-xl sm:text-2xl font-bold text-gray-900 capitalize">
-        {displayName}
-      </h2>
-
-      <p className="text-sm text-gray-500 font-medium mb-2 mt-1 break-all">
-        {displayEmail}
-      </p>
-
-      <div className="flex items-center gap-2 mt-2 px-3 py-1 rounded-full bg-green-50 border border-green-200">
-        <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
-        <span className="text-xs font-medium text-green-700">Active</span>
-      </div>
-
-      <div className="w-full h-px bg-gradient-to-r from-transparent via-gray-200 to-transparent my-6" />
-
-      <button
-        type="button"
-        disabled={uploading}
-        onClick={() => fileInputRef.current?.click()}
-        className="w-full py-2.5 rounded-lg bg-teal-600 text-white font-semibold hover:bg-teal-700 transition-colors duration-200 flex items-center justify-center gap-2 disabled:opacity-60"
-      >
-        <Camera className="w-4 h-4" />
-        {uploading ? "Uploading..." : "Upload Photo"}
-      </button>
-
-      <button
-        type="button"
-        disabled={uploading || !profileImage}
-        onClick={handleRemoveImage}
-        className="w-full py-2.5 mt-3 rounded-lg border border-red-300 text-red-600 font-semibold hover:bg-red-50 transition-colors duration-200 flex items-center justify-center gap-2 disabled:opacity-50"
-      >
-        <Trash2 className="w-4 h-4" />
-        Remove Photo
-      </button>
-    </div>
+    </section>
   );
 }

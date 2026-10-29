@@ -1,24 +1,12 @@
-import React from "react";
+import React from 'react';
 
-const FeatureCard = ({ icon, title, description, children }) => {
+const FeatureCard = ({ icon: Icon, title }) => {
   return (
-    <div className="bg-white rounded-2xl shadow-lg p-8 hover:shadow-xl hover:scale-105 transition-all duration-300">
-      
-      {/* Icon */}
-      <div className="w-14 h-14 flex items-center justify-center rounded-xl bg-gray-100 mb-6">
-        {icon}
+    <div className="flex items-center gap-4 rounded-2xl border border-slate-200 bg-gradient-to-br from-white to-[#F0FDFA] p-6 text-slate-900 shadow-sm transition-colors hover:border-teal-200">
+      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#ECFDF5] text-[#0F766E]">
+        {Icon && <Icon className="w-5 h-5" />}
       </div>
-
-      {/* Title */}
-      <h3 className="text-2xl lg:text-3xl font-semibold mb-4">{title}</h3>
-
-      {/* Description */}
-      <p className="text-gray-600 mb-6 leading-relaxed text-lg">
-        {description}
-      </p>
-
-      {/* Extra Content */}
-      {children}
+      <span className="text-base font-medium text-gray-200">{title}</span>
     </div>
   );
 };
